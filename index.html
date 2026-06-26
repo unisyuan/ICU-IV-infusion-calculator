@@ -1,0 +1,4152 @@
+﻿<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICU 臨床開方與輸注速成系統 (輔大醫院適用)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Light theme (default) */
+            --bg-color: #f1f5f9;
+            --container-bg: #f8fafc;
+            --card-bg: #ffffff;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --accent: #0284c7;
+            --accent-hover: #0369a1;
+            --accent-light: rgba(2, 132, 199, 0.1);
+            --success: #059669;
+            --success-light: rgba(5, 150, 105, 0.1);
+            --danger: #dc2626;
+            --danger-light: rgba(220, 38, 38, 0.1);
+            --warning: #d97706;
+            --warning-light: rgba(217, 119, 6, 0.1);
+            --input-bg: #f8fafc;
+            --input-border: #cbd5e1;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            --font-family: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --glass-bg: rgba(255, 255, 255, 0.8);
+            --glass-border: rgba(255, 255, 255, 0.6);
+        }
+
+        body.dark-theme {
+            /* Dark theme */
+            --bg-color: #0b0f19;
+            --container-bg: #0f172a;
+            --card-bg: #1e293b;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent: #38bdf8;
+            --accent-hover: #7dd3fc;
+            --accent-light: rgba(56, 189, 248, 0.12);
+            --success: #34d399;
+            --success-light: rgba(52, 211, 153, 0.12);
+            --danger: #f87171;
+            --danger-light: rgba(248, 113, 113, 0.12);
+            --warning: #fbbf24;
+            --warning-light: rgba(251, 191, 36, 0.12);
+            --input-bg: #0f172a;
+            --input-border: #334155;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
+            --glass-bg: rgba(30, 41, 59, 0.8);
+            --glass-border: rgba(255, 255, 255, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.2s, border-color 0.2s, color 0.15s;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        /* App Layout Container */
+        .app-container {
+            width: 100%;
+            max-width: 1600px;
+            background-color: var(--container-bg);
+            border-radius: 1.25rem;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Header block */
+        header {
+            padding: 1.25rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(135deg, var(--accent-light), transparent);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-title h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, var(--text-primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-title p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.2rem;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Weight Input Card in Header */
+        .weight-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 0.5rem 1rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .weight-card label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .weight-input-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .weight-number-input {
+            width: 4.5rem;
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 0.375rem;
+            color: var(--text-primary);
+            padding: 0.25rem 0.5rem;
+            font-weight: 700;
+            text-align: center;
+            outline: none;
+            font-size: 1rem;
+        }
+
+        .weight-number-input:focus {
+            border-color: var(--accent);
+        }
+
+        .weight-slider {
+            width: 8rem;
+            cursor: pointer;
+            accent-color: var(--accent);
+        }
+
+        /* Theme toggle switch button */
+        .theme-btn {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            cursor: pointer;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+            font-size: 1.1rem;
+        }
+
+        .theme-btn:hover {
+            transform: scale(1.05);
+            background-color: var(--input-bg);
+        }
+
+        /* Navigation Tabs */
+        .tabs-nav {
+            display: flex;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 1rem;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            font-weight: 600;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            position: relative;
+            outline: none;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .tab-btn.active {
+            color: var(--accent);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background-color: var(--accent);
+            border-radius: 3px 3px 0 0;
+        }
+
+        /* Main Workspace container */
+        .app-workspace {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            height: calc(100vh - 180px);
+        }
+
+        .tab-content {
+            display: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        .tab-content.active {
+            display: flex;
+        }
+
+        /* =========================================================================
+           TAB 1: DRUGS CALCULATOR PANELS
+           ========================================================================= */
+        .drugs-layout {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        /* Sidebar: drug selector list */
+        .drugs-sidebar {
+            border-right: 1px solid var(--border-color);
+            background-color: var(--card-bg);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-search {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .search-wrapper {
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .search-box {
+            width: 100%;
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 0.5rem;
+            color: var(--text-primary);
+            padding: 0.5rem 0.75rem 0.5rem 2.20rem;
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .search-box:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px var(--accent-light);
+        }
+
+        .category-tabs {
+            display: flex;
+            gap: 0.25rem;
+            overflow-x: auto;
+            padding-bottom: 0.25rem;
+        }
+
+        .category-tab {
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text-secondary);
+            padding: 0.25rem 0.6rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .category-tab.active {
+            background-color: var(--accent);
+            border-color: var(--accent);
+            color: #ffffff;
+        }
+
+        .drug-list-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0.5rem 0;
+        }
+
+        .drug-item-btn {
+            width: 100%;
+            text-align: left;
+            background: transparent;
+            border: none;
+            padding: 0.75rem 1.25rem;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
+        .drug-item-btn:hover {
+            background-color: var(--input-bg);
+        }
+
+        .drug-item-btn.active {
+            background-color: var(--accent-light);
+            border-left-color: var(--accent);
+        }
+
+        .drug-item-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .drug-item-meta {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Detail Panel: active drug workspace */
+        .drug-detail-panel {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem;
+            background-color: var(--container-bg);
+        }
+
+        .no-drug-selected {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-secondary);
+            gap: 1rem;
+        }
+
+        .no-drug-icon {
+            font-size: 4rem;
+            color: var(--accent);
+            opacity: 0.3;
+        }
+
+        .drug-detail-card {
+            background-color: var(--card-bg);
+            border-radius: 1rem;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            padding: 1.5rem 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            animation: fadeIn 0.25s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .detail-title h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .detail-category-badge {
+            background-color: var(--accent-light);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .method-tabs {
+            display: flex;
+            gap: 0.5rem;
+            background-color: var(--input-bg);
+            padding: 0.25rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .method-tab-btn {
+            background: transparent;
+            border: none;
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            outline: none;
+        }
+
+        .method-tab-btn.active {
+            background-color: var(--card-bg);
+            color: var(--text-primary);
+            box-shadow: var(--shadow);
+        }
+
+        /* Detail grids */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .info-box {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 0.85rem 1.15rem;
+        }
+
+        .info-box-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+        }
+
+        .info-box-value {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .info-box-value.highlight {
+            color: var(--accent);
+            font-size: 1.1rem;
+        }
+
+        /* Calculations section */
+        .calc-section {
+            border-top: 1px solid var(--border-color);
+            padding-top: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .calc-header {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .calc-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 768px) {
+            .calc-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .calc-card {
+            background: linear-gradient(135deg, var(--input-bg), var(--card-bg));
+            border: 1px solid var(--border-color);
+            border-radius: 0.85rem;
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .calc-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .calc-input-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .calc-input-wrapper {
+            position: relative;
+            flex: 1;
+        }
+
+        .calc-input {
+            width: 100%;
+            background-color: var(--card-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 0.5rem;
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            outline: none;
+            text-align: right;
+            padding-right: 3.5rem;
+        }
+
+        .calc-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px var(--accent-light);
+        }
+
+        .calc-unit-label {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .calc-result-box {
+            background-color: var(--accent-light);
+            border: 1px solid var(--accent);
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            text-align: center;
+        }
+
+        .calc-result-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .calc-result-val {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .calc-result-box.danger-warning {
+            background-color: var(--danger-light);
+            border-color: var(--danger);
+        }
+
+        .calc-result-box.danger-warning .calc-result-val {
+            color: var(--danger);
+        }
+
+        .calc-result-box.danger-warning .calc-result-label {
+            color: var(--danger);
+        }
+
+        /* 24h quantity stats */
+        .daily-usage-stats {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .daily-usage-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .daily-usage-lbl {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .daily-usage-val {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* =========================================================================
+           TAB 2: Y-SITE COMPATIBILITY CHECKER
+           ========================================================================= */
+        .compat-layout {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .compat-selector-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .selector-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 600px) {
+            .selector-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .drug-select-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .drug-select-group label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .compat-select {
+            width: 100%;
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 0.5rem;
+            color: var(--text-primary);
+            padding: 0.6rem 1rem;
+            font-size: 0.95rem;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .compat-select:focus {
+            border-color: var(--accent);
+        }
+
+        .compat-result-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            min-height: 250px;
+        }
+
+        .compat-badge {
+            font-size: 2rem;
+            font-weight: 700;
+            padding: 0.5rem 2rem;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: var(--shadow);
+        }
+
+        .compat-badge.compatible {
+            background-color: var(--success-light);
+            color: var(--success);
+            border: 2px solid var(--success);
+        }
+
+        .compat-badge.incompatible {
+            background-color: var(--danger-light);
+            color: var(--danger);
+            border: 2px solid var(--danger);
+        }
+
+        .compat-badge.unknown {
+            background-color: var(--warning-light);
+            color: var(--warning);
+            border: 2px solid var(--warning);
+        }
+
+        .compat-info-text {
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-align: center;
+            color: var(--text-primary);
+            max-width: 600px;
+        }
+
+        .compat-description {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            text-align: center;
+            max-width: 500px;
+            background-color: var(--input-bg);
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        /* =========================================================================
+           TAB 3: ELECTROLYTES INFO TABLE
+           ========================================================================= */
+        .electro-layout {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .electro-search-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 0.75rem 1.25rem;
+            box-shadow: var(--shadow);
+        }
+
+        .electro-table-container {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .electro-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        .electro-table th, .electro-table td {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .electro-table th {
+            background-color: var(--input-bg);
+            color: var(--text-secondary);
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: sticky;
+            top: 0;
+        }
+
+        .electro-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .electro-table tbody tr:hover {
+            background-color: var(--input-bg);
+        }
+
+        .electro-name {
+            font-weight: 700;
+            color: var(--accent);
+            white-space: pre-line;
+        }
+
+        .electro-text {
+            white-space: pre-line;
+            color: var(--text-primary);
+        }
+
+        .electro-prep {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            white-space: pre-line;
+            max-width: 450px;
+        }
+
+        /* =========================================================================
+           TAB 4: QUICK REFERENCE DATAGRID
+           ========================================================================= */
+        .grid-layout {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .grid-table-container {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            flex: 1;
+        }
+
+        .grid-table-scroll {
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .grid-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.85rem;
+        }
+
+        .grid-table th {
+            background-color: var(--input-bg);
+            color: var(--text-secondary);
+            font-weight: 700;
+            padding: 0.85rem 1.25rem;
+            border-bottom: 2px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+
+        .grid-table td {
+            padding: 0.85rem 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .grid-table tr:hover {
+            background-color: var(--input-bg);
+        }
+
+        .grid-cat-cell {
+            font-weight: 800;
+            color: var(--accent);
+            text-align: center;
+        }
+
+        .grid-name-cell {
+            font-weight: 700;
+        }
+
+        .grid-action-btn {
+            background-color: var(--accent-light);
+            color: var(--accent);
+            border: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .grid-action-btn:hover {
+            background-color: var(--accent);
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <!-- HEADER -->
+    <header>
+        <div class="header-title">
+            <h1>🏥 ICU 臨床開方與輸注速成系統</h1>
+            <p>常見點滴輸注藥物劑量、配製方式與 Y-site 相容性快查 (輔大醫院適用)</p>
+        </div>
+        <div class="header-controls">
+            <!-- Patient Weight input panel -->
+            <div class="weight-card">
+                <label for="weightInput">病患體重:</label>
+                <div class="weight-input-container">
+                    <input type="number" id="weightInput" class="weight-number-input" min="10" max="250" step="0.5" value="75.5">
+                    <span style="font-weight: 700; font-size: 0.9rem; color: var(--text-secondary);">kg</span>
+                    <input type="range" id="weightSlider" class="weight-slider" min="10" max="200" step="0.5" value="75.5">
+                </div>
+            </div>
+            <!-- Theme Toggle button -->
+            <button id="themeToggleBtn" class="theme-btn" title="切換明暗佈景">☀️</button>
+        </div>
+    </header>
+
+    <!-- NAVIGATION TABS -->
+    <nav class="tabs-nav">
+        <button class="tab-btn active" data-tab="tab-calculator">常用輸注藥物計算</button>
+        <button class="tab-btn" data-tab="tab-compatibility">Y-site 相容性查詢</button>
+        <button class="tab-btn" data-tab="tab-electrolytes">電解質輸注限制</button>
+        <button class="tab-btn" data-tab="tab-datagrid">常用藥物對照總表</button>
+    </nav>
+
+    <!-- APP WORKSPACE -->
+    <div class="app-workspace">
+        
+        <!-- TAB 1: CALCULATOR PANELS -->
+        <div id="tab-calculator" class="tab-content active">
+            <div class="drugs-layout">
+                <!-- Drug selection list sidebar -->
+                <div class="drugs-sidebar">
+                    <div class="sidebar-search">
+                        <div class="search-wrapper">
+                            <span class="search-icon">🔍</span>
+                            <input type="text" id="drugSearch" class="search-box" placeholder="搜尋學名或商品名...">
+                        </div>
+                        <div class="category-tabs" id="categoryFilterContainer">
+                            <span class="category-tab active" data-cat="all">全部</span>
+                            <!-- categories dynamic -->
+                        </div>
+                    </div>
+                    <div class="drug-list-scroll" id="drugListContainer">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+
+                <!-- Drug details & calculator panel -->
+                <div class="drug-detail-panel" id="drugDetailPanel">
+                    <div class="no-drug-selected">
+                        <span class="no-drug-icon">💊</span>
+                        <p style="font-weight: 600; font-size: 1.1rem;">請從左側選單選擇藥物，開始開方計算</p>
+                        <p style="font-size: 0.85rem; max-width: 300px; text-align: center;">系統會自動根據目前設定的病患體重重算點滴安全流速與劑量。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: Y-SITE COMPATIBILITY CHECKER -->
+        <div id="tab-compatibility" class="tab-content">
+            <div class="compat-layout">
+                <div class="compat-selector-card">
+                    <h3 style="font-weight: 700; margin-bottom: 0.5rem;">Y-site 雙藥物點滴相容性檢測</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                        在 ICU 常用多路點滴注入，可選擇兩種不同藥物，系統會比對 Excel 的 Y-Site 相容表，確認兩者是否可接於同一個 Y 型接頭中同時給藥。
+                    </p>
+                    <div class="selector-row">
+                        <div class="drug-select-group">
+                            <label for="compatDrugA">點滴藥物 A (第一路):</label>
+                            <select id="compatDrugA" class="compat-select">
+                                <option value="" disabled selected>-- 請選擇藥物 A --</option>
+                                <!-- options loaded dynamically -->
+                            </select>
+                        </div>
+                        <div class="drug-select-group">
+                            <label for="compatDrugB">點滴藥物 B (第二路):</label>
+                            <select id="compatDrugB" class="compat-select">
+                                <option value="" disabled selected>-- 請選擇藥物 B --</option>
+                                <!-- options loaded dynamically -->
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="compat-result-card" id="compatResultContainer">
+                    <span style="font-size: 3rem; opacity: 0.2;">🧪</span>
+                    <p style="font-weight: 600; color: var(--text-secondary); text-align: center; margin-top: 0.5rem;">
+                        請選擇上方兩種點滴藥物，以檢視其 Y-site 混合相容性報告。
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: ELECTROLYTES TABLE -->
+        <div id="tab-electrolytes" class="tab-content">
+            <div class="electro-layout">
+                <div class="electro-search-row">
+                    <div>
+                        <h3 style="font-weight: 700;">電解質輸注流速與濃度限制指南</h3>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.15rem;">
+                            加護病房補充高難度電解質（如鉀、鈣、鎂、磷）時的安全警訊與配製程序。
+                        </p>
+                    </div>
+                    <input type="text" id="electroSearch" class="search-box" style="width: 250px;" placeholder="搜尋電解質名稱...">
+                </div>
+
+                <div class="electro-table-container">
+                    <table class="electro-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 25%;">電解質藥物名稱</th>
+                                <th style="width: 20%;">流速限制</th>
+                                <th style="width: 20%;">濃度限制</th>
+                                <th style="width: 10%;">推薦稀釋液</th>
+                                <th style="width: 25%;">常用配製與說明</th>
+                            </tr>
+                        </thead>
+                        <tbody id="electroTableBody">
+                            <!-- Dynamic rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: QUICK REFERENCE DATAGRID -->
+        <div id="tab-datagrid" class="tab-content">
+            <div class="grid-layout">
+                <div class="electro-search-row">
+                    <div>
+                        <h3 style="font-weight: 700;">常用藥物輸注對照總表</h3>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.15rem;">
+                            通用版所有藥物的標準配製、濃度與劑量區間總覽。可點擊右側開方按鈕快速載入計算器。
+                        </p>
+                    </div>
+                    <input type="text" id="datagridSearch" class="search-box" style="width: 250px;" placeholder="篩選總表藥物名稱...">
+                </div>
+
+                <div class="grid-table-container">
+                    <div class="grid-table-scroll">
+                        <table class="grid-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 5%; text-align: center;">字首</th>
+                                    <th style="width: 25%;">藥物與規格</th>
+                                    <th style="width: 15%;">常用劑量</th>
+                                    <th style="width: 20%;">常用配製</th>
+                                    <th style="width: 10%;">稀釋液</th>
+                                    <th style="width: 10%;">最終濃度</th>
+                                    <th style="width: 10%;">開方操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="datagridTableBody">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // =========================================================================
+    // EMBEDDED DATABASES (INJECTED BY POWERSHELL COMPILER)
+    // =========================================================================
+    const rawMedications = [
+    {
+        "Row":  8,
+        "Category":  "A",
+        "Name":  "Aminophylline (250 mg/10 ml/amp)",
+        "Dosage":  "0.1~0.8 mg/kg/hr",
+        "Method":  "",
+        "Prep":  "2 amps/250 ml\n( 10 ml/amp x 2 amps + 230 ml)",
+        "Diluent":  "NS, D5W",
+        "Conc":  "2 mg/ml",
+        "MinRate":  "3.775",
+        "MinRateFormula":  "=0.1*$C$2/2",
+        "MaxRate":  "30.2",
+        "MaxRateFormula":  "=0.8*$C$2/2",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "20",
+        "ConvDose":  "0.529801324503311",
+        "ConvDoseFormula":  "=R8/C2*2",
+        "ConvDoseUnit":  "mg/kg/hr"
+    },
+    {
+        "Row":  11,
+        "Category":  "A",
+        "Name":  "Amiodarone (150 mg/3 ml/amp)",
+        "Dosage":  "方法一",
+        "Method":  "1 mg/min 6 hrs",
+        "Prep":  "6 amps/500 ml",
+        "Diluent":  "D5W",
+        "Conc":  "1.8 mg/ml",
+        "MinRate":  "33",
+        "MinRateFormula":  "33",
+        "MaxRate":  "mg/hr 6 hrs",
+        "MaxRateFormula":  "mg/hr 6 hrs",
+        "RateUnit":  "",
+        "InputRate":  "",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  12,
+        "Category":  "A",
+        "Name":  "",
+        "Dosage":  "",
+        "Method":  "0.5 mg/min 18 hrs",
+        "Prep":  "",
+        "Diluent":  "",
+        "Conc":  "",
+        "MinRate":  "17",
+        "MinRateFormula":  "17",
+        "MaxRate":  "mg/hr 18 hrs",
+        "MaxRateFormula":  "mg/hr 18 hrs",
+        "RateUnit":  "",
+        "InputRate":  "",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  13,
+        "Category":  "A",
+        "Name":  "",
+        "Dosage":  "方法二",
+        "Method":  "0.6 mg/min",
+        "Prep":  "6 amps/250 ml",
+        "Diluent":  "D5W",
+        "Conc":  "3.6 mg/ml",
+        "MinRate":  "11",
+        "MinRateFormula":  "11",
+        "MaxRate":  "ml/hr",
+        "MaxRateFormula":  "ml/hr",
+        "RateUnit":  "",
+        "InputRate":  "",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  14,
+        "Category":  "A",
+        "Name":  "",
+        "Dosage":  "方法三",
+        "Method":  "0.6 mg/min",
+        "Prep":  "6 amps/500 ml",
+        "Diluent":  "D5W",
+        "Conc":  "1.8 mg/ml",
+        "MinRate":  "21",
+        "MinRateFormula":  "21",
+        "MaxRate":  "ml/hr",
+        "MaxRateFormula":  "ml/hr",
+        "RateUnit":  "",
+        "InputRate":  "",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  16,
+        "Category":  "A",
+        "Name":  "Atracurium (25 mg/2.5 mL/amp)",
+        "Dosage":  "2~20 mcg/kg/min",
+        "Method":  "",
+        "Prep":  "50 mg/100 mL",
+        "Diluent":  "NS, D5W",
+        "Conc":  "0.5 mg/mL",
+        "MinRate":  "18.12",
+        "MinRateFormula":  "=$C$2*2*60/1000/0.5",
+        "MaxRate":  "181.2",
+        "MaxRateFormula":  "=$C$2*20*60/1000/0.5",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  17,
+        "Category":  "A",
+        "Name":  "",
+        "Dosage":  "",
+        "Method":  "",
+        "Prep":  "不稀釋",
+        "Diluent":  "",
+        "Conc":  "10 mg/mL",
+        "MinRate":  "0.906",
+        "MinRateFormula":  "=2*$C$2*60/1000/10",
+        "MaxRate":  "9.06",
+        "MaxRateFormula":  "=20*$C$2*60/1000/10",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  19,
+        "Category":  "A",
+        "Name":  "Alprostadil",
+        "Dosage":  "5~10 mL/hr (PAOD)",
+        "Method":  "",
+        "Prep":  "80 mcg/250 mL",
+        "Diluent":  "NS, D5W",
+        "Conc":  "0.32 mcg/mL",
+        "MinRate":  "5",
+        "MinRateFormula":  "5",
+        "MaxRate":  "10",
+        "MaxRateFormula":  "10",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  20,
+        "Category":  "A",
+        "Name":  "",
+        "Dosage":  "10 mL/hr (flap)",
+        "Method":  "",
+        "Prep":  "80 mcg/500 mL",
+        "Diluent":  "NS, D5W",
+        "Conc":  "0.16 mcg/mL",
+        "MinRate":  "",
+        "MinRateFormula":  "",
+        "MaxRate":  "10",
+        "MaxRateFormula":  "10",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  22,
+        "Category":  "C",
+        "Name":  "Cisatracurium (10 mg/5 ml/amp)",
+        "Dosage":  "0.5~10 mcg/kg/min",
+        "Method":  "",
+        "Prep":  "10 amps/250 ml",
+        "Diluent":  "NS, D5W",
+        "Conc":  "0.4 mg/ml",
+        "MinRate":  "5.6625",
+        "MinRateFormula":  "=0.5*C2*60/1000/0.4",
+        "MaxRate":  "113.25",
+        "MaxRateFormula":  "=M22*20",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "75",
+        "ConvDose":  "6.62251655629139",
+        "ConvDoseFormula":  "=R22*0.4*1000/60/C2",
+        "ConvDoseUnit":  "mcg/kg/min"
+    },
+    {
+        "Row":  23,
+        "Category":  "C",
+        "Name":  "",
+        "Dosage":  "3 mcg/kg/min",
+        "Method":  "",
+        "Prep":  "(5 ml/amp x10 amps + 200 ml)",
+        "Diluent":  "",
+        "Conc":  "",
+        "MinRate":  "33.975",
+        "MinRateFormula":  "=3*C2*60/1000/0.4",
+        "MaxRate":  "",
+        "MaxRateFormula":  "",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "20",
+        "ConvDose":  "1.76600441501104",
+        "ConvDoseFormula":  "=R23*0.4*1000/60/C2",
+        "ConvDoseUnit":  "mcg/kg/min"
+    },
+    {
+        "Row":  24,
+        "Category":  "C",
+        "Name":  "",
+        "Dosage":  "0.5~10 mcg/kg/min",
+        "Method":  "",
+        "Prep":  "不稀釋",
+        "Diluent":  "無",
+        "Conc":  "2 mg/ml",
+        "MinRate":  "1.1325",
+        "MinRateFormula":  "=0.5*C2*60/1000/2",
+        "MaxRate":  "22.65",
+        "MaxRateFormula":  "=M24*20",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "15",
+        "ConvDose":  "6.62251655629139",
+        "ConvDoseFormula":  "=R24*2*1000/60/C2",
+        "ConvDoseUnit":  "mcg/kg/min"
+    },
+    {
+        "Row":  25,
+        "Category":  "C",
+        "Name":  "",
+        "Dosage":  "3 mcg/kg/min",
+        "Method":  "",
+        "Prep":  "",
+        "Diluent":  "",
+        "Conc":  "",
+        "MinRate":  "6.795",
+        "MinRateFormula":  "=3*C2*60/1000/2",
+        "MaxRate":  "",
+        "MaxRateFormula":  "",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "4.5",
+        "ConvDose":  "1.98675496688742",
+        "ConvDoseFormula":  "=R25*2*1000/60/C2",
+        "ConvDoseUnit":  "mcg/kg/min"
+    },
+    {
+        "Row":  26,
+        "Category":  "D",
+        "Name":  "Dexmedetomidine (200 mcg/2 ml/amp)",
+        "Dosage":  "0.2~1.5 mcg/kg/hr",
+        "Method":  "",
+        "Prep":  "1 vial/50 ml",
+        "Diluent":  "NS",
+        "Conc":  "4 mcg/ml",
+        "MinRate":  "3.775",
+        "MinRateFormula":  "=0.2*$C$2/4",
+        "MaxRate":  "28.3125",
+        "MaxRateFormula":  "=1.5*$C$2/4",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "6",
+        "ConvDose":  "0.317880794701987",
+        "ConvDoseFormula":  "=R26*4/C2",
+        "ConvDoseUnit":  "mcg/kg/hr"
+    },
+    {
+        "Row":  28,
+        "Category":  "D",
+        "Name":  "Diltiazem (50 mg/5 ml/amp)",
+        "Dosage":  "5~15 mg/hr",
+        "Method":  "",
+        "Prep":  "2 amps/100 ml\n(5 ml/amp x 2 amps + 90 ml)",
+        "Diluent":  "NS, D5W",
+        "Conc":  "1 mg/ml",
+        "MinRate":  "5",
+        "MinRateFormula":  "5",
+        "MaxRate":  "15",
+        "MaxRateFormula":  "15",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "15",
+        "ConvDose":  "15",
+        "ConvDoseFormula":  "=R28*1",
+        "ConvDoseUnit":  "mg/hr"
+    },
+    {
+        "Row":  31,
+        "Category":  "D",
+        "Name":  "Dobutamine (250 mg/20 ml/vial)",
+        "Dosage":  "2~20 mcg/kg/min",
+        "Method":  "",
+        "Prep":  "2 vials/250 mL",
+        "Diluent":  "NS, D5W",
+        "Conc":  "2 mg/ml",
+        "MinRate":  "4.53",
+        "MinRateFormula":  "=2*$C$2*60/1000/2",
+        "MaxRate":  "45.3",
+        "MaxRateFormula":  "=20*$C$2*60/1000/2",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "6",
+        "ConvDose":  "1.32450331125828",
+        "ConvDoseFormula":  "=R31*1*1000/60/C2",
+        "ConvDoseUnit":  "mcg/kg/min"
+    },
+    {
+        "Row":  33,
+        "Category":  "D",
+        "Name":  "Dopamine (200 mg/5 mL/amp)",
+        "Dosage":  "0.5~20 mcg/kg/min",
+        "Method":  "",
+        "Prep":  "4 amp in D5W 250ml",
+        "Diluent":  "NS, D5W",
+        "Conc":  "3.2 mg/mL",
+        "MinRate":  "0.7078125",
+        "MinRateFormula":  "=0.5*$C$2*60/1000/3.2",
+        "MaxRate":  "28.3125",
+        "MaxRateFormula":  "=20*$C$2*60/1000/3.2",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  34,
+        "Category":  "D",
+        "Name":  "Dopamine (400 mg/250 ml/bag)",
+        "Dosage":  "0.5~20 mcg/kg/min",
+        "Method":  "",
+        "Prep":  "-",
+        "Diluent":  "不稀釋",
+        "Conc":  "1.6 mg/ml",
+        "MinRate":  "1.415625",
+        "MinRateFormula":  "=0.5*$C$2*60/1000/1.6",
+        "MaxRate":  "56.625",
+        "MaxRateFormula":  "=20*$C$2*60/1000/1.6",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "10",
+        "ConvDose":  "3.53200883002208",
+        "ConvDoseFormula":  "=R34*1000/60*1.6/C2",
+        "ConvDoseUnit":  "mcg/kg/min"
+    },
+    {
+        "Row":  35,
+        "Category":  "D",
+        "Name":  "Dopamine (600 mg/200 ml/bag)",
+        "Dosage":  "0.5~20 mcg/kg/min",
+        "Method":  "",
+        "Prep":  "",
+        "Diluent":  "不稀釋",
+        "Conc":  "3 mg/mL",
+        "MinRate":  "0.755",
+        "MinRateFormula":  "=0.5*$C$2*60/1000/3",
+        "MaxRate":  "30.2",
+        "MaxRateFormula":  "=20*$C$2*60/1000/3",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  37,
+        "Category":  "D",
+        "Name":  "Drotrecogin alfa (5 mg/vial 已下市；紀念用)",
+        "Dosage":  "24 mcg/kg/hr 96 hrs",
+        "Method":  "",
+        "Prep":  "2 vials/100 ml",
+        "Diluent":  "NS",
+        "Conc":  "0.1 mg/ml",
+        "MinRate":  "18.12",
+        "MinRateFormula":  "=24*C2/1000/0.1",
+        "MaxRate":  "",
+        "MaxRateFormula":  "",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "12",
+        "ConvDose":  "15.8940397350993",
+        "ConvDoseFormula":  "=R37*0.1*1000/C2",
+        "ConvDoseUnit":  "mcg/kg/hr"
+    },
+    {
+        "Row":  39,
+        "Category":  "E",
+        "Name":  "Eptifibatide (75 mg/100 ml/vial)",
+        "Dosage":  "180 mcg/kg IV 2 mins",
+        "Method":  "",
+        "Prep":  "不稀釋",
+        "Diluent":  "無",
+        "Conc":  "0.75 mg/ml",
+        "MinRate":  "18.12",
+        "MinRateFormula":  "=0.18*C2/0.75",
+        "MaxRate":  "",
+        "MaxRateFormula":  "",
+        "RateUnit":  "ml (IV 2分鐘)",
+        "InputRate":  "",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  40,
+        "Category":  "E",
+        "Name":  "",
+        "Dosage":  "2 mcg/kg/min",
+        "Method":  "",
+        "Prep":  "不稀釋",
+        "Diluent":  "無",
+        "Conc":  "0.75 mg/ml",
+        "MinRate":  "10",
+        "MinRateFormula":  "10",
+        "MaxRate":  "",
+        "MaxRateFormula":  "",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "8",
+        "ConvDose":  "1.32450331125828",
+        "ConvDoseFormula":  "=R40/60*1000/C2*0.75",
+        "ConvDoseUnit":  "mcg/kg/min"
+    },
+    {
+        "Row":  42,
+        "Category":  "E",
+        "Name":  "Epinephrine (1 mg/1 ml/amp)",
+        "Dosage":  "0.01~0.5 mcg/kg/min",
+        "Method":  "",
+        "Prep":  "1 amp/100 ml",
+        "Diluent":  "NS, D5W",
+        "Conc":  "0.01 mg/ml",
+        "MinRate":  "4.53",
+        "MinRateFormula":  "=$C$2*0.01*60/0.01/1000",
+        "MaxRate":  "226.5",
+        "MaxRateFormula":  "=$C$2*0.5*60/0.01/1000",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "12",
+        "ConvDose":  "2",
+        "ConvDoseFormula":  "=R42*0.01/60*1000",
+        "ConvDoseUnit":  "mcg/min"
+    },
+    {
+        "Row":  43,
+        "Category":  "E",
+        "Name":  "",
+        "Dosage":  "",
+        "Method":  "",
+        "Prep":  "2 amps/100 ml",
+        "Diluent":  "NS, D5W",
+        "Conc":  "0.02 mg/ml",
+        "MinRate":  "2.265",
+        "MinRateFormula":  "=$C$2*0.01*60/0.02/1000",
+        "MaxRate":  "113.25",
+        "MaxRateFormula":  "=$C$2*0.5*60/0.02/1000",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "6",
+        "ConvDose":  "2",
+        "ConvDoseFormula":  "=R43*0.02*1000/60",
+        "ConvDoseUnit":  "mcg/min"
+    },
+    {
+        "Row":  44,
+        "Category":  "E",
+        "Name":  "",
+        "Dosage":  "",
+        "Method":  "",
+        "Prep":  "10 amps/100 ml",
+        "Diluent":  "NS, D5W",
+        "Conc":  "0.1 mg/ml",
+        "MinRate":  "0.453",
+        "MinRateFormula":  "=$C$2*0.01*60/0.1/1000",
+        "MaxRate":  "22.65",
+        "MaxRateFormula":  "=$C$2*0.5*60/0.1/1000",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "4",
+        "ConvDose":  "6.66666666666667",
+        "ConvDoseFormula":  "=R44*0.1*1000/60",
+        "ConvDoseUnit":  "mcg/min"
+    },
+    {
+        "Row":  45,
+        "Category":  "E",
+        "Name":  "",
+        "Dosage":  "",
+        "Method":  "",
+        "Prep":  "不稀釋",
+        "Diluent":  "無",
+        "Conc":  "1 mg/ml",
+        "MinRate":  "0.0453",
+        "MinRateFormula":  "=$C$2*0.01*60/1/1000",
+        "MaxRate":  "2.265",
+        "MaxRateFormula":  "=$C$2*0.5*60/1/1000",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "1.2",
+        "ConvDose":  "20",
+        "ConvDoseFormula":  "=R45*1000/60",
+        "ConvDoseUnit":  "mcg/min"
+    },
+    {
+        "Row":  46,
+        "Category":  "E",
+        "Name":  "",
+        "Dosage":  "1~40 mcg/min",
+        "Method":  "",
+        "Prep":  "1 amp/100 ml",
+        "Diluent":  "NS, D5W",
+        "Conc":  "0.01 mg/ml",
+        "MinRate":  "6",
+        "MinRateFormula":  "=1*60/0.01/1000",
+        "MaxRate":  "240",
+        "MaxRateFormula":  "=40*60/0.01/1000",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  47,
+        "Category":  "E",
+        "Name":  "",
+        "Dosage":  "",
+        "Method":  "",
+        "Prep":  "2 amps/100 ml",
+        "Diluent":  "NS, D5W",
+        "Conc":  "0.02 mg/ml",
+        "MinRate":  "3",
+        "MinRateFormula":  "=1*60/0.02/1000",
+        "MaxRate":  "120",
+        "MaxRateFormula":  "=40*60/0.02/1000",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  48,
+        "Category":  "E",
+        "Name":  "",
+        "Dosage":  "",
+        "Method":  "",
+        "Prep":  "10 amps/100 ml",
+        "Diluent":  "NS, D5W",
+        "Conc":  "0.1 mg/ml",
+        "MinRate":  "0.6",
+        "MinRateFormula":  "=1*60/0.1/1000",
+        "MaxRate":  "24",
+        "MaxRateFormula":  "=40*60/0.1/1000",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  49,
+        "Category":  "E",
+        "Name":  "",
+        "Dosage":  "",
+        "Method":  "",
+        "Prep":  "不稀釋",
+        "Diluent":  "無",
+        "Conc":  "1 mg/ml",
+        "MinRate":  "0.06",
+        "MinRateFormula":  "=1*60/1/1000",
+        "MaxRate":  "2.4",
+        "MaxRateFormula":  "=40*60/1/1000",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  51,
+        "Category":  "E",
+        "Name":  "Esmolol (已下市；紀念用)",
+        "Dosage":  "0.05~0.2 mg/kg/min",
+        "Method":  "",
+        "Prep":  "不稀釋",
+        "Diluent":  "無",
+        "Conc":  "10 mg/ml",
+        "MinRate":  "22.65",
+        "MinRateFormula":  "=0.05*C2*60/10",
+        "MaxRate":  "90.6",
+        "MaxRateFormula":  "=0.2*C2*60/10",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "15",
+        "ConvDose":  "0.033112582781457",
+        "ConvDoseFormula":  "=R51*10/60/C2",
+        "ConvDoseUnit":  "mg/kg/min"
+    },
+    {
+        "Row":  53,
+        "Category":  "F",
+        "Name":  "Fentanyl 管制 (500 mcg/10 ml/amp)",
+        "Dosage":  "50~300 mcg/hr",
+        "Method":  "",
+        "Prep":  "不稀釋",
+        "Diluent":  "無",
+        "Conc":  "50 mcg/ml",
+        "MinRate":  "1",
+        "MinRateFormula":  "=50/50",
+        "MaxRate":  "6",
+        "MaxRateFormula":  "=300/50",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "2",
+        "ConvDose":  "100",
+        "ConvDoseFormula":  "=R53*50",
+        "ConvDoseUnit":  "mcg/hr"
+    },
+    {
+        "Row":  54,
+        "Category":  "F",
+        "Name":  "",
+        "Dosage":  "",
+        "Method":  "",
+        "Prep":  "2 amps/50 mL",
+        "Diluent":  "NS, D5W",
+        "Conc":  "20 mcg/ml",
+        "MinRate":  "2.5",
+        "MinRateFormula":  "=50/20",
+        "MaxRate":  "15",
+        "MaxRateFormula":  "=300/20",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "5",
+        "ConvDose":  "250",
+        "ConvDoseFormula":  "=R54*50",
+        "ConvDoseUnit":  "mcg/hr"
+    },
+    {
+        "Row":  55,
+        "Category":  "F",
+        "Name":  "",
+        "Dosage":  "",
+        "Method":  "",
+        "Prep":  "1 amp/25 mL",
+        "Diluent":  "NS, D5W",
+        "Conc":  "20 mcg/ml",
+        "MinRate":  "2.5",
+        "MinRateFormula":  "=50/20",
+        "MaxRate":  "15",
+        "MaxRateFormula":  "=300/20",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "5",
+        "ConvDose":  "250",
+        "ConvDoseFormula":  "=R55*50",
+        "ConvDoseUnit":  "mcg/hr"
+    },
+    {
+        "Row":  56,
+        "Category":  "F",
+        "Name":  "",
+        "Dosage":  "0.7~10 mcg/kg/hr",
+        "Method":  "",
+        "Prep":  "不稀釋",
+        "Diluent":  "無",
+        "Conc":  "50 mcg/ml",
+        "MinRate":  "1.057",
+        "MinRateFormula":  "=0.7*$C$2/50",
+        "MaxRate":  "15.1",
+        "MaxRateFormula":  "=10*$C$2/50",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  57,
+        "Category":  "F",
+        "Name":  "",
+        "Dosage":  "",
+        "Method":  "",
+        "Prep":  "2 amps/50 mL",
+        "Diluent":  "NS, D5W",
+        "Conc":  "20 mcg/ml",
+        "MinRate":  "2.6425",
+        "MinRateFormula":  "=0.7*$C$2/20",
+        "MaxRate":  "37.75",
+        "MaxRateFormula":  "=10*$C$2/20",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  58,
+        "Category":  "F",
+        "Name":  "",
+        "Dosage":  "",
+        "Method":  "",
+        "Prep":  "1 amp/25 mL",
+        "Diluent":  "NS, D5W",
+        "Conc":  "20 mcg/ml",
+        "MinRate":  "2.6425",
+        "MinRateFormula":  "=0.7*$C$2/20",
+        "MaxRate":  "37.75",
+        "MaxRateFormula":  "=10*$C$2/20",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  61,
+        "Category":  "H",
+        "Name":  "Heparin (25,000 U/5 ml/vial)",
+        "Dosage":  "12~15 U/kg/hr",
+        "Method":  "",
+        "Prep":  "1 vial/250 ml",
+        "Diluent":  "NS",
+        "Conc":  "100 U/ml",
+        "MinRate":  "9.06",
+        "MinRateFormula":  "=12*$C$2/100",
+        "MaxRate":  "11.325",
+        "MaxRateFormula":  "=15*$C$2/100",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "5",
+        "ConvDose":  "6.62251655629139",
+        "ConvDoseFormula":  "=R61*100/C2",
+        "ConvDoseUnit":  "U/kg/hr"
+    },
+    {
+        "Row":  64,
+        "Category":  "I",
+        "Name":  "Isoproterenol (200 mcg/1 ml/amp)",
+        "Dosage":  "2~10 mcg/min",
+        "Method":  "",
+        "Prep":  "10 amps/250 ml\n(1 ml/amp x 10 amps + 240 ml)",
+        "Diluent":  "NS, D5W",
+        "Conc":  "8 mcg/ml",
+        "MinRate":  "15",
+        "MinRateFormula":  "=2*60/8",
+        "MaxRate":  "75",
+        "MaxRateFormula":  "=M64*5",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "15",
+        "ConvDose":  "2",
+        "ConvDoseFormula":  "=R64*8/60",
+        "ConvDoseUnit":  "mcg/min"
+    },
+    {
+        "Row":  67,
+        "Category":  "I",
+        "Name":  "Isosorbide dinitrate (10 mg/10 ml/amp)",
+        "Dosage":  "2~10 mg/hr",
+        "Method":  "",
+        "Prep":  "5 amps/500 ml",
+        "Diluent":  "NS, D5W",
+        "Conc":  "0.1 mg/ml",
+        "MinRate":  "20",
+        "MinRateFormula":  "=2/0.1",
+        "MaxRate":  "100",
+        "MaxRateFormula":  "=10/0.1",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "20",
+        "ConvDose":  "2",
+        "ConvDoseFormula":  "=R67*0.1",
+        "ConvDoseUnit":  "mg/hr"
+    },
+    {
+        "Row":  68,
+        "Category":  "I",
+        "Name":  "(請注意是\"di\"nitrate或\"mono\"nitrate)",
+        "Dosage":  "",
+        "Method":  "",
+        "Prep":  "",
+        "Diluent":  "",
+        "Conc":  "",
+        "MinRate":  "",
+        "MinRateFormula":  "",
+        "MaxRate":  "",
+        "MaxRateFormula":  "",
+        "RateUnit":  "",
+        "InputRate":  "",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  69,
+        "Category":  "I",
+        "Name":  "Immunoglobulin (IVIG) (6% 50 ml/bot) [NEW]",
+        "Dosage":  "Kawasaki 總量1.6~2.0 g/kg分成2~5天 或",
+        "Method":  "",
+        "Prep":  "",
+        "Diluent":  "不稀釋",
+        "Conc":  "0.06 gm/ml",
+        "MinRate":  "",
+        "MinRateFormula":  "",
+        "MaxRate":  "60",
+        "MaxRateFormula":  "60",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  70,
+        "Category":  "I",
+        "Name":  "6% x 50 ml/bot = 3 gm/bot",
+        "Dosage":  "Kawasaki 總量2.0 g/kg 一次打完",
+        "Method":  "",
+        "Prep":  "",
+        "Diluent":  "不稀釋",
+        "Conc":  "0.06 gm/ml",
+        "MinRate":  "",
+        "MinRateFormula":  "",
+        "MaxRate":  "60",
+        "MaxRateFormula":  "60",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  71,
+        "Category":  "I",
+        "Name":  "",
+        "Dosage":  "ITP 總量 2.0 g/kg分成2~5天",
+        "Method":  "",
+        "Prep":  "",
+        "Diluent":  "不稀釋",
+        "Conc":  "0.06 gm/ml",
+        "MinRate":  "",
+        "MinRateFormula":  "",
+        "MaxRate":  "60",
+        "MaxRateFormula":  "60",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  73,
+        "Category":  "L",
+        "Name":  "Labetalol (25 mg/5 ml/amp)",
+        "Dosage":  "0.5~2 mg/min",
+        "Method":  "",
+        "Prep":  "10 amps/250 ml\n(5 ml/amp x 10 amps + 200 ml)",
+        "Diluent":  "NS, D5W",
+        "Conc":  "1 mg/ml",
+        "MinRate":  "30",
+        "MinRateFormula":  "=0.5*60/1",
+        "MaxRate":  "120",
+        "MaxRateFormula":  "=2*60/1",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "30",
+        "ConvDose":  "0.5",
+        "ConvDoseFormula":  "=R73*1/60",
+        "ConvDoseUnit":  "mg/min"
+    },
+    {
+        "Row":  75,
+        "Category":  "L",
+        "Name":  "",
+        "Dosage":  "",
+        "Method":  "",
+        "Prep":  "5 amps/125 mL\n(5 ml/amp x 5 amps + 100 ml)",
+        "Diluent":  "NS, D5W",
+        "Conc":  "1 mg/mL",
+        "MinRate":  "30",
+        "MinRateFormula":  "=0.5*60/1",
+        "MaxRate":  "120",
+        "MaxRateFormula":  "=2*60/1",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  77,
+        "Category":  "L",
+        "Name":  "",
+        "Dosage":  "",
+        "Method":  "",
+        "Prep":  "4 amps/100 mL\n(5 ml/amp x 4 amps + 80 ml)",
+        "Diluent":  "NS, D5W",
+        "Conc":  "1 mg/mL",
+        "MinRate":  "30",
+        "MinRateFormula":  "=0.5*60/1",
+        "MaxRate":  "120",
+        "MaxRateFormula":  "=2*60/1",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  79,
+        "Category":  "L",
+        "Name":  "",
+        "Dosage":  "",
+        "Method":  "",
+        "Prep":  "不稀釋",
+        "Diluent":  "無",
+        "Conc":  "5 mg/mL",
+        "MinRate":  "6",
+        "MinRateFormula":  "=0.5*60/5",
+        "MaxRate":  "24",
+        "MaxRateFormula":  "=2*60/5",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  81,
+        "Category":  "L",
+        "Name":  "Lidocaine (100 mg/5 ml/amp)",
+        "Dosage":  "1~4 mg/min",
+        "Method":  "",
+        "Prep":  "10 amps/250 ml\n(5 ml/amp x 10 amps + 200 ml)",
+        "Diluent":  "NS, D5W",
+        "Conc":  "4 mg/ml",
+        "MinRate":  "15",
+        "MinRateFormula":  "=1*60/4",
+        "MaxRate":  "60",
+        "MaxRateFormula":  "=4*60/4",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "15",
+        "ConvDose":  "1",
+        "ConvDoseFormula":  "=R81/60*4",
+        "ConvDoseUnit":  "mg/min"
+    },
+    {
+        "Row":  84,
+        "Category":  "L",
+        "Name":  "Lorazepam (2 mg/1 ml/amp)",
+        "Dosage":  "0.01~0.1 mg/kg/hr",
+        "Method":  "",
+        "Prep":  "10 amps/20 ml",
+        "Diluent":  "NS, D5W",
+        "Conc":  "1 mg/ml",
+        "MinRate":  "0.755",
+        "MinRateFormula":  "=0.01*C2/1",
+        "MaxRate":  "7.55",
+        "MaxRateFormula":  "=M84*10",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "7",
+        "ConvDose":  "0.0927152317880795",
+        "ConvDoseFormula":  "=R84*1/C2",
+        "ConvDoseUnit":  "mg/kg/hr"
+    },
+    {
+        "Row":  86,
+        "Category":  "L",
+        "Name":  "Lidocaine (100 mg/5 mL)",
+        "Dosage":  "1~4 mg/min",
+        "Method":  "",
+        "Prep":  "10 amps/100 mL",
+        "Diluent":  "NS, D5W",
+        "Conc":  "10 mg/mL",
+        "MinRate":  "6",
+        "MinRateFormula":  "=1/10*60",
+        "MaxRate":  "24",
+        "MaxRateFormula":  "=4/10*60",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  87,
+        "Category":  "L",
+        "Name":  "",
+        "Dosage":  "",
+        "Method":  "",
+        "Prep":  "10 amps/250 mL",
+        "Diluent":  "NS, D5W",
+        "Conc":  "4 mg/mL",
+        "MinRate":  "15",
+        "MinRateFormula":  "=1/4*60",
+        "MaxRate":  "60",
+        "MaxRateFormula":  "=4/4*60",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  89,
+        "Category":  "L",
+        "Name":  "Levosimendan (12.5 mg/5 ml/vial)",
+        "Dosage":  "0.05~0.2 mcg/kg/min",
+        "Method":  "",
+        "Prep":  "1 vial/250 ml",
+        "Diluent":  "D5W",
+        "Conc":  "0.05 mg/ml",
+        "MinRate":  "4.53",
+        "MinRateFormula":  "=0.05*C2/1000/0.05*60",
+        "MaxRate":  "18.12",
+        "MaxRateFormula":  "=M89*4",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "3",
+        "ConvDose":  "0.33112582781457",
+        "ConvDoseFormula":  "=R89*1000/60*0.5/C2",
+        "ConvDoseUnit":  "mcg/kg/min"
+    },
+    {
+        "Row":  90,
+        "Category":  "M",
+        "Name":  "Midazolam (5 mg/1 ml/amp)",
+        "Dosage":  "0.01~0.1 mg/kg/hr",
+        "Method":  "",
+        "Prep":  "50 mg/50 mL",
+        "Diluent":  "NS, D5W",
+        "Conc":  "1 mg/ml",
+        "MinRate":  "0.755",
+        "MinRateFormula":  "=0.01*$C$2/1",
+        "MaxRate":  "7.55",
+        "MaxRateFormula":  "=0.1*$C$2/1",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "0.4",
+        "ConvDose":  "0.0264900662251656",
+        "ConvDoseFormula":  "=R90*5/C2",
+        "ConvDoseUnit":  "mg/kg/hr"
+    },
+    {
+        "Row":  91,
+        "Category":  "M",
+        "Name":  "",
+        "Dosage":  "",
+        "Method":  "",
+        "Prep":  "不稀釋",
+        "Diluent":  "無",
+        "Conc":  "5 mg/ml",
+        "MinRate":  "0.151",
+        "MinRateFormula":  "=0.01*C2/5",
+        "MaxRate":  "1.51",
+        "MaxRateFormula":  "=0.1*C2/5",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "0.4",
+        "ConvDose":  "0.0264900662251656",
+        "ConvDoseFormula":  "=R91*5/C2",
+        "ConvDoseUnit":  "mg/kg/hr"
+    },
+    {
+        "Row":  94,
+        "Category":  "M",
+        "Name":  "Milrinone (10 mg/10 ml/vial)",
+        "Dosage":  "0.125~0.75 mcg/kg/min",
+        "Method":  "",
+        "Prep":  "2 vials/100 ml",
+        "Diluent":  "NS, D5W",
+        "Conc":  "0.2 mg/ml",
+        "MinRate":  "2.83125",
+        "MinRateFormula":  "=0.125*$C$2*60/1000/0.2",
+        "MaxRate":  "16.9875",
+        "MaxRateFormula":  "=0.75*$C$2*60/1000/0.2",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "5.6",
+        "ConvDose":  "0.247240618101545",
+        "ConvDoseFormula":  "=R94*1000/60*0.2/C2",
+        "ConvDoseUnit":  "mcg/kg/min"
+    },
+    {
+        "Row":  95,
+        "Category":  "M",
+        "Name":  "",
+        "Dosage":  "Max 稀釋濃度：200 mcg/mL",
+        "Method":  "",
+        "Prep":  "(10 ml/vial x 2 vials + 80 ml)",
+        "Diluent":  "",
+        "Conc":  "",
+        "MinRate":  "",
+        "MinRateFormula":  "",
+        "MaxRate":  "",
+        "MaxRateFormula":  "",
+        "RateUnit":  "",
+        "InputRate":  "",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  97,
+        "Category":  "N",
+        "Name":  "Nicardipine (10 mg/10 ml/amp)",
+        "Dosage":  "5~15 mg/hr",
+        "Method":  "",
+        "Prep":  "1 amp/50 ml\n(1 amp + 40 mL)",
+        "Diluent":  "NS, D5W",
+        "Conc":  "0.2 mg/ml",
+        "MinRate":  "25",
+        "MinRateFormula":  "=5/0.2",
+        "MaxRate":  "75",
+        "MaxRateFormula":  "=15/0.2",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "15",
+        "ConvDose":  "3",
+        "ConvDoseFormula":  "=R97*0.2",
+        "ConvDoseUnit":  "mg/hr"
+    },
+    {
+        "Row":  99,
+        "Category":  "N",
+        "Name":  "",
+        "Dosage":  "",
+        "Method":  "",
+        "Prep":  "1 amp/20 ml\n(1 amp + 10 mL)",
+        "Diluent":  "NS, D5W",
+        "Conc":  "0.5 mg/mL",
+        "MinRate":  "10",
+        "MinRateFormula":  "=5/0.5",
+        "MaxRate":  "30",
+        "MaxRateFormula":  "=15/0.5",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  101,
+        "Category":  "N",
+        "Name":  "",
+        "Dosage":  "",
+        "Method":  "",
+        "Prep":  "不稀釋",
+        "Diluent":  "無",
+        "Conc":  "1 mg/ml",
+        "MinRate":  "5",
+        "MinRateFormula":  "5",
+        "MaxRate":  "15",
+        "MaxRateFormula":  "15",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "5",
+        "ConvDose":  "5",
+        "ConvDoseFormula":  "=R101*1",
+        "ConvDoseUnit":  "mg/hr"
+    },
+    {
+        "Row":  103,
+        "Category":  "N",
+        "Name":  "Nimodipine (10 mg/50 ml/bot)",
+        "Dosage":  "1~2 mg/hr",
+        "Method":  "",
+        "Prep":  "2 bots/500 ml\n(50 ml/bot x 2 bots + 400 ml)",
+        "Diluent":  "NS, D5W",
+        "Conc":  "0.04 mg/ml",
+        "MinRate":  "25",
+        "MinRateFormula":  "=1/0.04",
+        "MaxRate":  "50",
+        "MaxRateFormula":  "=M103*2",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "25",
+        "ConvDose":  "1",
+        "ConvDoseFormula":  "=R103*0.04",
+        "ConvDoseUnit":  "mg/hr"
+    },
+    {
+        "Row":  105,
+        "Category":  "N",
+        "Name":  "Nitroprusside (50 mg/vial)",
+        "Dosage":  "3~10 mcg/kg/min",
+        "Method":  "",
+        "Prep":  "2 vials/250 ml",
+        "Diluent":  "NS, D5W",
+        "Conc":  "0.4 mg/ml",
+        "MinRate":  "33.975",
+        "MinRateFormula":  "=3*C2*60/1000/0.4",
+        "MaxRate":  "113.25",
+        "MaxRateFormula":  "=10*C2*60/1000/0.4",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "30",
+        "ConvDose":  "2.64900662251656",
+        "ConvDoseFormula":  "=R105*0.4*1000/60/C2",
+        "ConvDoseUnit":  "mcg/kg/min"
+    },
+    {
+        "Row":  107,
+        "Category":  "N",
+        "Name":  "Norepinephrine (4 mg/4 ml/amp)",
+        "Dosage":  "0.5~30 mcg/min",
+        "Method":  "",
+        "Prep":  "4 amps/250 ml\n(4 ml/amp x 4 amps + 234 ml)",
+        "Diluent":  "D5W",
+        "Conc":  "64 mcg/ml",
+        "MinRate":  "0.46875",
+        "MinRateFormula":  "=0.5*60/64",
+        "MaxRate":  "28.125",
+        "MaxRateFormula":  "=30*60/64",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "0.5",
+        "ConvDose":  "0.533333333333333",
+        "ConvDoseFormula":  "=R107*64/60",
+        "ConvDoseUnit":  "mcg/min"
+    },
+    {
+        "Row":  109,
+        "Category":  "N",
+        "Name":  "",
+        "Dosage":  "",
+        "Method":  "",
+        "Prep":  "2 amps/250 ml\n(4 ml/amp x 2 amps + 242 ml)",
+        "Diluent":  "D5W",
+        "Conc":  "32 mcg/ml",
+        "MinRate":  "0.9375",
+        "MinRateFormula":  "=0.5*60/32",
+        "MaxRate":  "56.25",
+        "MaxRateFormula":  "=30*60/32",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "20",
+        "ConvDose":  "10.6666666666667",
+        "ConvDoseFormula":  "=R109/60*32",
+        "ConvDoseUnit":  "mcg/min"
+    },
+    {
+        "Row":  111,
+        "Category":  "N",
+        "Name":  "",
+        "Dosage":  "0.05~0.4 mcg/kg/min",
+        "Method":  "",
+        "Prep":  "4 amps/250 ml",
+        "Diluent":  "D5W",
+        "Conc":  "64 mcg/ml",
+        "MinRate":  "3.5390625",
+        "MinRateFormula":  "=0.05*$C$2*60/64",
+        "MaxRate":  "28.3125",
+        "MaxRateFormula":  "=0.4*$C$2*60/64",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  112,
+        "Category":  "N",
+        "Name":  "",
+        "Dosage":  "",
+        "Method":  "",
+        "Prep":  "2 amps/250 ml",
+        "Diluent":  "D5W",
+        "Conc":  "32 mcg/ml",
+        "MinRate":  "7.078125",
+        "MinRateFormula":  "=0.05*$C$2*60/32",
+        "MaxRate":  "56.625",
+        "MaxRateFormula":  "=0.4*$C$2*60/32",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  114,
+        "Category":  "N",
+        "Name":  "Nitroglycerin (5 mg/10 ml/amp)",
+        "Dosage":  "10~200 mcg/min",
+        "Method":  "",
+        "Prep":  "不稀釋",
+        "Diluent":  "無",
+        "Conc":  "500 mcg/mL",
+        "MinRate":  "1.2",
+        "MinRateFormula":  "=10*60/500",
+        "MaxRate":  "24",
+        "MaxRateFormula":  "=200*60/500",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "1.2",
+        "ConvDose":  "10",
+        "ConvDoseFormula":  "=R114/60*1000*0.5",
+        "ConvDoseUnit":  "mcg/min"
+    },
+    {
+        "Row":  115,
+        "Category":  "N",
+        "Name":  "",
+        "Dosage":  "",
+        "Method":  "",
+        "Prep":  "10 amps/250 mL",
+        "Diluent":  "NS, D5W",
+        "Conc":  "200 mcg/mL",
+        "MinRate":  "3",
+        "MinRateFormula":  "=10*60/200",
+        "MaxRate":  "60",
+        "MaxRateFormula":  "=200*60/200",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  116,
+        "Category":  "N",
+        "Name":  "Nitroglycerin (50 mg/250 ml/bot)",
+        "Dosage":  "",
+        "Method":  "",
+        "Prep":  "不稀釋",
+        "Diluent":  "無",
+        "Conc":  "200 mcg/mL",
+        "MinRate":  "3",
+        "MinRateFormula":  "=10*60/200",
+        "MaxRate":  "60",
+        "MaxRateFormula":  "=200*60/200",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  119,
+        "Category":  "O",
+        "Name":  "Octreotide (0.1 mg/1 ml/amp)",
+        "Dosage":  "25~50 mcg/hr",
+        "Method":  "",
+        "Prep":  "10 amps/250 ml\n(1 ml/amp x 10 amps + 240 ml)",
+        "Diluent":  "NS, D5W",
+        "Conc":  "4 mcg/ml",
+        "MinRate":  "6.25",
+        "MinRateFormula":  "=25/4",
+        "MaxRate":  "12.5",
+        "MaxRateFormula":  "=50/4",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "6.3",
+        "ConvDose":  "25.2",
+        "ConvDoseFormula":  "=R119*4",
+        "ConvDoseUnit":  "mcg/hr"
+    },
+    {
+        "Row":  121,
+        "Category":  "O",
+        "Name":  "",
+        "Dosage":  "",
+        "Method":  "",
+        "Prep":  "10 amps/200 ml\n(1 ml/amp x 10 amps + 190 ml)",
+        "Diluent":  "NS, D5W",
+        "Conc":  "5 mcg/ml",
+        "MinRate":  "5",
+        "MinRateFormula":  "=25/5",
+        "MaxRate":  "10",
+        "MaxRateFormula":  "=M121*2",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "5",
+        "ConvDose":  "25",
+        "ConvDoseFormula":  "=R121*5",
+        "ConvDoseUnit":  "mcg/hr"
+    },
+    {
+        "Row":  124,
+        "Category":  "P",
+        "Name":  "Pantoprazole (40 mg/vial) [NEW]",
+        "Dosage":  "10 mg/hr",
+        "Method":  "",
+        "Prep":  "5 vials/200 ml",
+        "Diluent":  "NS",
+        "Conc":  "1 mg/ml",
+        "MinRate":  "",
+        "MinRateFormula":  "",
+        "MaxRate":  "10",
+        "MaxRateFormula":  "=10/1",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  125,
+        "Category":  "P",
+        "Name":  "或Esomeprazole (40 mg/vial)",
+        "Dosage":  "",
+        "Method":  "",
+        "Prep":  "5 vials/250 ml",
+        "Diluent":  "NS",
+        "Conc":  "0.8 mg/ml",
+        "MinRate":  "",
+        "MinRateFormula":  "",
+        "MaxRate":  "12.5",
+        "MaxRateFormula":  "=10/0.8",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  128,
+        "Category":  "P",
+        "Name":  "Pot. Phosphate (20 ml/amp)",
+        "Dosage":  "2 mmol/h",
+        "Method":  "x 6h = 12 mmol",
+        "Prep":  "4 ml/250 ml",
+        "Diluent":  "NS",
+        "Conc":  "0.12 mmol/ml",
+        "MinRate":  "",
+        "MinRateFormula":  "",
+        "MaxRate":  "",
+        "MaxRateFormula":  "",
+        "RateUnit":  "",
+        "InputRate":  "",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  129,
+        "Category":  "P",
+        "Name":  "P 3.0 mM/ml (60 mM/amp)",
+        "Dosage":  "4 mmol/h",
+        "Method":  "x 6h = 24 mmol",
+        "Prep":  "8 ml/250 ml",
+        "Diluent":  "NS",
+        "Conc":  "0.24 mmol/ml",
+        "MinRate":  "",
+        "MinRateFormula":  "",
+        "MaxRate":  "41.6666666666667",
+        "MaxRateFormula":  "=250/6",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "(或6小時緩慢滴注完畢)",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  130,
+        "Category":  "P",
+        "Name":  "K 4.4 mEq/L (88 mEq/amp)",
+        "Dosage":  "8 mmol/h",
+        "Method":  "x 6h = 48 mmol",
+        "Prep":  "16 ml/250 ml",
+        "Diluent":  "NS",
+        "Conc":  "0.48 mmol/ml",
+        "MinRate":  "",
+        "MinRateFormula":  "",
+        "MaxRate":  "",
+        "MaxRateFormula":  "",
+        "RateUnit":  "",
+        "InputRate":  "",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  132,
+        "Category":  "P",
+        "Name":  "Propofol (200mg/20ml/amp)",
+        "Dosage":  "5~80 mcg/kg/min",
+        "Method":  "",
+        "Prep":  "不稀釋\nIf dilution is required, use D5W, do not dilute to less than 2 mg/mL",
+        "Diluent":  "無",
+        "Conc":  "10 mg/ml",
+        "MinRate":  "2.265",
+        "MinRateFormula":  "=5*$C$2*60/1000/10",
+        "MaxRate":  "36.24",
+        "MaxRateFormula":  "=80*$C$2*60/1000/10",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "24",
+        "ConvDose":  "52.9801324503311",
+        "ConvDoseFormula":  "=R132*10*1000/60/C2",
+        "ConvDoseUnit":  "mcg/kg/min"
+    },
+    {
+        "Row":  136,
+        "Category":  "R",
+        "Name":  "Rocuronium (50 mg/5 ml/amp)",
+        "Dosage":  "10~12 mcg/kg/min",
+        "Method":  "",
+        "Prep":  "不稀釋",
+        "Diluent":  "無",
+        "Conc":  "10 mg/ml",
+        "MinRate":  "4.53",
+        "MinRateFormula":  "=10*C2*60/1000/10",
+        "MaxRate":  "5.436",
+        "MaxRateFormula":  "=12*C2*60/1000/10",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "12",
+        "ConvDose":  "26.4900662251656",
+        "ConvDoseFormula":  "=R136*10*1000/60/C2",
+        "ConvDoseUnit":  "mcg/kg/min"
+    },
+    {
+        "Row":  138,
+        "Category":  "T",
+        "Name":  "Thiopental (已經未引進)",
+        "Dosage":  "3~5 mg/kg/hr",
+        "Method":  "",
+        "Prep":  "2 vials/200 ml",
+        "Diluent":  "NS, D5W",
+        "Conc":  "25 mg/ml",
+        "MinRate":  "9.06",
+        "MinRateFormula":  "=3*C2/25",
+        "MaxRate":  "15.1",
+        "MaxRateFormula":  "=5*C2/25",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "10",
+        "ConvDose":  "3.3112582781457",
+        "ConvDoseFormula":  "=R138*25/C2",
+        "ConvDoseUnit":  "mg/kg/hr"
+    },
+    {
+        "Row":  139,
+        "Category":  "T",
+        "Name":  "",
+        "Dosage":  "",
+        "Method":  "",
+        "Prep":  "2 vials/250 ml",
+        "Diluent":  "NS, D5W",
+        "Conc":  "20 mg/ml",
+        "MinRate":  "11.325",
+        "MinRateFormula":  "=3*C2/20",
+        "MaxRate":  "18.875",
+        "MaxRateFormula":  "=5*C2/20",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "15",
+        "ConvDose":  "3.97350993377483",
+        "ConvDoseFormula":  "=R139*20/C2",
+        "ConvDoseUnit":  "mg/kg/hr"
+    },
+    {
+        "Row":  141,
+        "Category":  "T",
+        "Name":  "Tirofiban (12.5 mg/50 ml/bot)",
+        "Dosage":  "0.4 mcg/kg/min",
+        "Method":  "",
+        "Prep":  "1 bot/200 ml",
+        "Diluent":  "NS, D5W",
+        "Conc":  "50 mcg/ml",
+        "MinRate":  "前30分鐘",
+        "MinRateFormula":  "前30分鐘",
+        "MaxRate":  "36.24",
+        "MaxRateFormula":  "=O142*4",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "",
+        "ConvDose":  "0.4",
+        "ConvDoseFormula":  "=O141*50/C2/60",
+        "ConvDoseUnit":  "mcg/kg/min"
+    },
+    {
+        "Row":  142,
+        "Category":  "T",
+        "Name":  "",
+        "Dosage":  "0.1 mcg/kg/min",
+        "Method":  "",
+        "Prep":  "1 bot/200 ml",
+        "Diluent":  "NS, D5W",
+        "Conc":  "50 mcg/ml",
+        "MinRate":  "後12-24小時",
+        "MinRateFormula":  "後12-24小時",
+        "MaxRate":  "9.06",
+        "MaxRateFormula":  "=0.1*C2/50*60",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "",
+        "ConvDose":  "0.1",
+        "ConvDoseFormula":  "=O142*50/60/C2",
+        "ConvDoseUnit":  "mcg/kg/min"
+    },
+    {
+        "Row":  145,
+        "Category":  "V",
+        "Name":  "Vasopressin (20 U/1 ml/amp)",
+        "Dosage":  "0.02~0.04 U/min (敗血性休克)",
+        "Method":  "",
+        "Prep":  "3 amps/100 ml",
+        "Diluent":  "NS, D5W",
+        "Conc":  "0.6 U/ml",
+        "MinRate":  "2",
+        "MinRateFormula":  "=0.02*60/0.6",
+        "MaxRate":  "4",
+        "MaxRateFormula":  "=0.04*60/0.6",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "4",
+        "ConvDose":  "0.04",
+        "ConvDoseFormula":  "=R145*0.6/60",
+        "ConvDoseUnit":  "U/min"
+    },
+    {
+        "Row":  146,
+        "Category":  "V",
+        "Name":  "",
+        "Dosage":  "0.02~0.04 U/min (敗血性休克)",
+        "Method":  "",
+        "Prep":  "1 amps/100 ml",
+        "Diluent":  "NS, D5W",
+        "Conc":  "0.2 U/ml",
+        "MinRate":  "6",
+        "MinRateFormula":  "=0.02*60/0.2",
+        "MaxRate":  "12",
+        "MaxRateFormula":  "=0.04*60/0.2",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "",
+        "ConvDose":  "",
+        "ConvDoseFormula":  "",
+        "ConvDoseUnit":  ""
+    },
+    {
+        "Row":  147,
+        "Category":  "V",
+        "Name":  "",
+        "Dosage":  "0.2~0.4 U/min (腸胃道出血)",
+        "Method":  "",
+        "Prep":  "5 amps/100 ml",
+        "Diluent":  "NS, D5W",
+        "Conc":  "1 U/ml",
+        "MinRate":  "12",
+        "MinRateFormula":  "=0.2*60",
+        "MaxRate":  "24",
+        "MaxRateFormula":  "=0.4*60",
+        "RateUnit":  "ml/hr",
+        "InputRate":  "12",
+        "ConvDose":  "0.2",
+        "ConvDoseFormula":  "=R147*1/60",
+        "ConvDoseUnit":  "U/min"
+    }
+]
+;
+    const compatibilityDB = {
+    "Drugs":  [
+                  "N = 不常用 C = 常用 AB = 抗微生物製劑",
+                  "D5W",
+                  "NS",
+                  "ABCIXIMAB",
+                  "ACYCLOVIR SODIUM",
+                  "ALBUMIN. SERUM HUMAN",
+                  "ALTEPLASE",
+                  "AMIKACIN SULFATE",
+                  "AMINOPHYLLINE",
+                  "AMIODARONE HYDROCHLORIDE",
+                  "AMPHOTERICIN B",
+                  "AMPHOTERICIN B CHOLESTERYL SULFATE",
+                  "AMPICILLIN SODIUM",
+                  "AMPICILLIN SODIUM - SULBACTAM",
+                  "ARGATROBAN",
+                  "ASCORBIC ACID",
+                  "ATRACURIUM BESYLATE",
+                  "ATROPINE SULFATE",
+                  "AZTREONAM",
+                  "BUMETANIDE",
+                  "BUTORPHANOL TARTRATE",
+                  "CALCIUM CHLORIDE",
+                  "CALCIUM GLUCONATE",
+                  "CEFAZOLIN SODIUM",
+                  "CEFEPINE HYDROCHLORIDE",
+                  "CEFOTAXIME SODIUM",
+                  "CEFOTETAN DISODIUM",
+                  "CEFOXITIN SODIUM",
+                  "CEFTAZIDIME",
+                  "CEFTIZOXIME SODIUM",
+                  "CEFTRIAXONE SODIUM",
+                  "CHLOROTHIAZIDE SODIUM",
+                  "CHLRPROMAZINE HYDROCHLORIDE",
+                  "CIMETIDINE HYDROCHLORIDE",
+                  "CIPROFLOXACIN",
+                  "CISATRACURIUM",
+                  "CLINDAMYCIN PHOSPHATE",
+                  "CO-TRIMOXAZOLE",
+                  "CYCLOSPORINE",
+                  "DAPTOMYCIN",
+                  "DEXAMETHASONE SODIUM PHOSPHATE",
+                  "DEXMEDETOMIDINE HYDROCHLORIDE",
+                  "DIAZEPAM",
+                  "DIGOXIN",
+                  "DILTIAZEM HYDROCHLORIDE",
+                  "DIPHENHYDRAMINE HYDROCHLORIDE",
+                  "DOBUTAMINE HYDROCHLORIDE",
+                  "DOPAMINE HYDROCHLORIDE",
+                  "DOXAPRAM HYDROCHLORIDE",
+                  "DOXYCYCLINE HYCLATE",
+                  "DROPERIDOL",
+                  "DROTRECOGIN ALFA",
+                  "ENALAPRILAT",
+                  "EPINEPHRINE HYDROCHLORIDE",
+                  "EPTIFIBATIDE",
+                  "ERYTHROMYCIN LACTOBIONATE",
+                  "ESMOLOL HYDROCHLORIDE",
+                  "FAMOTIDEINE",
+                  "FENTANYL CITRATE",
+                  "FILGRASTIM",
+                  "FLUCONAZOLE",
+                  "FUROSEMIDE",
+                  "GANCICLOVIR SODIUM",
+                  "GATIFLOXACIN",
+                  "GENTAMICIN SULFATE",
+                  "GRANISETRON HYDROCHLORIDE",
+                  "HEPARIN SODIUM",
+                  "HETASTARCH",
+                  "HYDRALAZINE HYDROCHLORIDE",
+                  "HYDROCORTISONE SODIUM SUCCINATE",
+                  "HYDROMORPHONE HYDROCHLORIDE",
+                  "HYDROXYZINE HYDROCHLORIDE",
+                  "IMIPENEM-CILASTATIN SODIUM",
+                  "INAMRINONE LACTATE",
+                  "INSULIN. REGULAR",
+                  "ISOPROTERENOL HYDROCHLORIDE",
+                  "KETAMINE",
+                  "KETOROLAC TROMETHAMINE",
+                  "LABETALOL HYDROCHLORIDE",
+                  "LANSOPRAZOLE",
+                  "LEVOFLOXACIN",
+                  "LIDOCAINE HYDROCHLORIDE",
+                  "LINEZOLID",
+                  "LORAZEPAM",
+                  "MAGNESIUM SULFATE",
+                  "MANNITOL SOLUTION",
+                  "MEPERIDINE HYDROCHLORIDE",
+                  "MEROPENEM",
+                  "METHYLPREDNISOLONE SODIUM",
+                  "METOCLOPRAMIDE HYDROCHLORIDE",
+                  "METOPROLOL TARTRATE",
+                  "METRONIDAZOLE HYDROCHLORIDE",
+                  "MIDAZOLAM HYDROCHLORIDE",
+                  "MILRINONE LACTATE",
+                  "MORPHINE SULFATE",
+                  "MULTIPLE VITAMIN INFUSION (MVI)",
+                  "MVI-12",
+                  "NAFCILLIN SODIUM",
+                  "NALBUPHIN HYDROCHLORIDE",
+                  "NESIRITIDE",
+                  "NITROGLYCERIN",
+                  "NITROPRUSSIDE SODIUM",
+                  "NOREPINEPHRINE BITARTRATE",
+                  "OCTREOTIDE",
+                  "OFLOXACIN",
+                  "ONDANSETRON HYDROCHLORIDE",
+                  "PANCURONIUM BROMIDE",
+                  "PANTOLOC",
+                  "PENICILLIN G POTASSIUM",
+                  "PENTOBARBITAL SODIUM",
+                  "PHENOBARBITAL SODIUM",
+                  "PHENYLEPHRINE HYDROCHLORIDE",
+                  "PIPERACILLIN AND TAZOBACTAM",
+                  "PIPERACILLIN SODIUM",
+                  "POTASSIUM CHLORIDE",
+                  "PROCAINE HYDROCHLORIDE",
+                  "PROCHLORPERAZINE EDISYLATE",
+                  "PROMETHAZINE HYDROCHLORIDE",
+                  "PROPOFOL",
+                  "PROPRANOLOL HYDROCHLORIDE",
+                  "RANITIDINE HYDROCHLORIDE",
+                  "SODIUM BICARBONATE",
+                  "SUCCINYLCHOLINE CHLORIDE",
+                  "THEOPHYLLINE. PREMIXED",
+                  "TICARCILLIN DISODIUM",
+                  "TICARCILLIN DISODIUM - CLAVULANATE",
+                  "TIROFIBAN HYDROCHLORIDE",
+                  "TOBRAMYCIN SILFATE",
+                  "VANCOMYCIN HYDROCHLORIDE"
+              ],
+    "Matrix":  {
+                   "C":  {
+                             "FENTANYL CITRATE":  "C",
+                             "THEOPHYLLINE. PREMIXED":  "C",
+                             "DILTIAZEM HYDROCHLORIDE":  "Ø",
+                             "DOXYCYCLINE HYCLATE":  "X",
+                             "DIAZEPAM":  "X",
+                             "POTASSIUM CHLORIDE":  "C",
+                             "FILGRASTIM":  "C",
+                             "PHENOBARBITAL SODIUM":  "X",
+                             "MVI-12":  "X",
+                             "AMPHOTERICIN B CHOLESTERYL SULFATE":  "X",
+                             "DOBUTAMINE HYDROCHLORIDE":  "X",
+                             "GATIFLOXACIN":  "C",
+                             "PENICILLIN G POTASSIUM":  "X",
+                             "MILRINONE LACTATE":  "C",
+                             "CISATRACURIUM":  "Ø",
+                             "METOCLOPRAMIDE HYDROCHLORIDE":  "X",
+                             "MEPERIDINE HYDROCHLORIDE":  "X",
+                             "PENTOBARBITAL SODIUM":  "Ø",
+                             "LINEZOLID":  "C",
+                             "D5W":  "C",
+                             "MANNITOL SOLUTION":  "C",
+                             "FAMOTIDEINE":  "C",
+                             "CHLRPROMAZINE HYDROCHLORIDE":  "X",
+                             "N = 不常用 C = 常用 AB = 抗微生物製劑":  "SODIUM BICARBONATE",
+                             "INAMRINONE LACTATE":  "X",
+                             "HYDROMORPHONE HYDROCHLORIDE":  "X",
+                             "ATROPINE SULFATE":  "X",
+                             "DOPAMINE HYDROCHLORIDE":  "X",
+                             "PIPERACILLIN AND TAZOBACTAM":  "X",
+                             "ERYTHROMYCIN LACTOBIONATE":  "C",
+                             "PROPOFOL":  "C",
+                             "CIPROFLOXACIN":  "Ø",
+                             "GRANISETRON HYDROCHLORIDE":  "C",
+                             "AMINOPHYLLINE":  "C",
+                             "VANCOMYCIN HYDROCHLORIDE":  "X",
+                             "ACYCLOVIR SODIUM":  "C",
+                             "AMIKACIN SULFATE":  "C",
+                             "OFLOXACIN":  "C",
+                             "DEXMEDETOMIDINE HYDROCHLORIDE":  "C",
+                             "AZTREONAM":  "C",
+                             "PANTOLOC":  "X",
+                             "MIDAZOLAM HYDROCHLORIDE":  "X",
+                             "AMIODARONE HYDROCHLORIDE":  "X",
+                             "HEPARIN SODIUM":  "C",
+                             "KETAMINE":  "X",
+                             "LIDOCAINE HYDROCHLORIDE":  "Ø",
+                             "NAFCILLIN SODIUM":  "C",
+                             "LANSOPRAZOLE":  "X",
+                             "CEFTAZIDIME":  "X",
+                             "INSULIN. REGULAR":  "C",
+                             "LABETALOL HYDROCHLORIDE":  "I",
+                             "DOXAPRAM HYDROCHLORIDE":  "X",
+                             "PROMETHAZINE HYDROCHLORIDE":  "X",
+                             "LEVOFLOXACIN":  "C",
+                             "NOREPINEPHRINE BITARTRATE":  "X",
+                             "CALCIUM CHLORIDE":  "X",
+                             "NS":  "C",
+                             "PROCAINE HYDROCHLORIDE":  "X",
+                             "FUROSEMIDE":  "C",
+                             "MORPHINE SULFATE":  "I",
+                             "MAGNESIUM SULFATE":  "X",
+                             "CALCIUM GLUCONATE":  "X",
+                             "ONDANSETRON HYDROCHLORIDE":  "X",
+                             "HYDROCORTISONE SODIUM SUCCINATE":  "C"
+                         },
+                   "AB":  {
+                              "DIPHENHYDRAMINE HYDROCHLORIDE":  "C",
+                              "AMINOPHYLLINE":  "X",
+                              "MEROPENEM":  "C",
+                              "FLUCONAZOLE":  "C",
+                              "HEPARIN SODIUM":  "Ø",
+                              "FENTANYL CITRATE":  "C",
+                              "CEFEPINE HYDROCHLORIDE":  "Ø",
+                              "ONDANSETRON HYDROCHLORIDE":  "C",
+                              "PHENYLEPHRINE HYDROCHLORIDE":  "C",
+                              "AMIODARONE HYDROCHLORIDE":  "C",
+                              "MORPHINE SULFATE":  "C",
+                              "CYCLOSPORINE":  "C",
+                              "CHLOROTHIAZIDE SODIUM":  "X",
+                              "ATRACURIUM BESYLATE":  "C",
+                              "PROMETHAZINE HYDROCHLORIDE":  "C",
+                              "CEFTIZOXIME SODIUM":  "Ø",
+                              "HYDROMORPHONE HYDROCHLORIDE":  "C",
+                              "DILTIAZEM HYDROCHLORIDE":  "C",
+                              "ESMOLOL HYDROCHLORIDE":  "C",
+                              "PIPERACILLIN SODIUM":  "Ø",
+                              "CEFOTETAN DISODIUM":  "Ø",
+                              "POTASSIUM CHLORIDE":  "C",
+                              "CEFTAZIDIME":  "Ø",
+                              "MEPERIDINE HYDROCHLORIDE":  "C",
+                              "CIMETIDINE HYDROCHLORIDE":  "C",
+                              "HYDROXYZINE HYDROCHLORIDE":  "C",
+                              "INSULIN. REGULAR":  "C",
+                              "SODIUM BICARBONATE":  "X",
+                              "GATIFLOXACIN":  "X",
+                              "MILRINONE LACTATE":  "C",
+                              "PROCHLORPERAZINE EDISYLATE":  "X",
+                              "NS":  "C",
+                              "CALCIUM GLUCONATE":  "C",
+                              "DEXMEDETOMIDINE HYDROCHLORIDE":  "C",
+                              "D5W":  "C",
+                              "AMPICILLIN SODIUM":  "Ø",
+                              "LEVOFLOXACIN":  "C",
+                              "N = 不常用 C = 常用 AB = 抗微生物製劑":  "VANCOMYCIN HYDROCHLORIDE",
+                              "RANITIDINE HYDROCHLORIDE":  "C",
+                              "GRANISETRON HYDROCHLORIDE":  "C",
+                              "LINEZOLID":  "C",
+                              "DOXAPRAM HYDROCHLORIDE":  "C",
+                              "PROPOFOL":  "C",
+                              "DROTRECOGIN ALFA":  "X",
+                              "ENALAPRILAT":  "C",
+                              "AMPHOTERICIN B CHOLESTERYL SULFATE":  "X",
+                              "CEFAZOLIN SODIUM":  "Ø",
+                              "PENICILLIN G POTASSIUM":  "X",
+                              "ATROPINE SULFATE":  "C",
+                              "MAGNESIUM SULFATE":  "C",
+                              "CEFOTAXIME SODIUM":  "Ø",
+                              "FAMOTIDEINE":  "C",
+                              "LORAZEPAM":  "C",
+                              "LANSOPRAZOLE":  "X",
+                              "PHENOBARBITAL SODIUM":  "Ø",
+                              "HYDROCORTISONE SODIUM SUCCINATE":  "X",
+                              "AMIKACIN SULFATE":  "C",
+                              "ACYCLOVIR SODIUM":  "C",
+                              "ALBUMIN. SERUM HUMAN":  "X",
+                              "PENTOBARBITAL SODIUM":  "X",
+                              "MIDAZOLAM HYDROCHLORIDE":  "C",
+                              "TICARCILLIN DISODIUM - CLAVULANATE":  "Ø",
+                              "CEFOXITIN SODIUM":  "Ø",
+                              "PANCURONIUM BROMIDE":  "C",
+                              "FILGRASTIM":  "C",
+                              "AMPICILLIN SODIUM - SULBACTAM":  "Ø",
+                              "TICARCILLIN DISODIUM":  "Ø",
+                              "LABETALOL HYDROCHLORIDE":  "C",
+                              "DEXAMETHASONE SODIUM PHOSPHATE":  "X",
+                              "NAFCILLIN SODIUM":  "Ø",
+                              "AZTREONAM":  "Ø",
+                              "CEFTRIAXONE SODIUM":  "Ø"
+                          },
+                   "N":  {
+                             "AMINOPHYLLINE":  "Ø",
+                             "NESIRITIDE":  "C",
+                             "FUROSEMIDE":  "C",
+                             "HEPARIN SODIUM":  "C",
+                             "CEFOXITIN SODIUM":  "C",
+                             "SODIUM BICARBONATE":  "I",
+                             "NOREPINEPHRINE BITARTRATE":  "C",
+                             "DIAZEPAM":  "C",
+                             "NITROPRUSSIDE SODIUM":  "Ø",
+                             "AMIODARONE HYDROCHLORIDE":  "C",
+                             "MORPHINE SULFATE":  "C",
+                             "NITROGLYCERIN":  "C",
+                             "MANNITOL SOLUTION":  "C",
+                             "HYDROMORPHONE HYDROCHLORIDE":  "C",
+                             "ARGATROBAN":  "C",
+                             "PIPERACILLIN SODIUM":  "C",
+                             "CLINDAMYCIN PHOSPHATE":  "C",
+                             "METHYLPREDNISOLONE SODIUM":  "C",
+                             "ERYTHROMYCIN LACTOBIONATE":  "C",
+                             "INSULIN. REGULAR":  "C",
+                             "PROPRANOLOL HYDROCHLORIDE":  "C",
+                             "LIDOCAINE HYDROCHLORIDE":  "C",
+                             "GENTAMICIN SULFATE":  "C",
+                             "GATIFLOXACIN":  "C",
+                             "POTASSIUM CHLORIDE":  "C",
+                             "NS":  "C",
+                             "CALCIUM GLUCONATE":  "C",
+                             "DEXMEDETOMIDINE HYDROCHLORIDE":  "C",
+                             "VANCOMYCIN HYDROCHLORIDE":  "C",
+                             "PANCURONIUM BROMIDE":  "C",
+                             "D5W":  "C",
+                             "AMPICILLIN SODIUM":  "Ø",
+                             "ISOPROTERENOL HYDROCHLORIDE":  "C",
+                             "EPINEPHRINE HYDROCHLORIDE":  "C",
+                             "METOCLOPRAMIDE HYDROCHLORIDE":  "C",
+                             "EPTIFIBATIDE":  "C",
+                             "AMPHOTERICIN B":  "X",
+                             "LINEZOLID":  "C",
+                             "THEOPHYLLINE. PREMIXED":  "C",
+                             "PROPOFOL":  "C",
+                             "MEPERIDINE HYDROCHLORIDE":  "C",
+                             "AMPHOTERICIN B CHOLESTERYL SULFATE":  "X",
+                             "CEFAZOLIN SODIUM":  "C",
+                             "MULTIPLE VITAMIN INFUSION (MVI)":  "C",
+                             "PENICILLIN G POTASSIUM":  "C",
+                             "TOBRAMYCIN SILFATE":  "C",
+                             "ATROPINE SULFATE":  "C",
+                             "MAGNESIUM SULFATE":  "C",
+                             "DOBUTAMINE HYDROCHLORIDE":  "C",
+                             "CEFOTAXIME SODIUM":  "C",
+                             "FAMOTIDEINE":  "C",
+                             "LANSOPRAZOLE":  "X",
+                             "DOPAMINE HYDROCHLORIDE":  "C",
+                             "PHENOBARBITAL SODIUM":  "C",
+                             "HYDROCORTISONE SODIUM SUCCINATE":  "C",
+                             "AMIKACIN SULFATE":  "C",
+                             "CALCIUM CHLORIDE":  "C",
+                             "CIPROFLOXACIN":  "C",
+                             "ALBUMIN. SERUM HUMAN":  "X",
+                             "PENTOBARBITAL SODIUM":  "C",
+                             "CO-TRIMOXAZOLE":  "Ø",
+                             "ASCORBIC ACID":  "C",
+                             "CIMETIDINE HYDROCHLORIDE":  "C",
+                             "DIGOXIN":  "C",
+                             "N = 不常用 C = 常用 AB = 抗微生物製劑":  "VERAPAMIL HYDROCHLORIDE",
+                             "TICARCILLIN DISODIUM":  "C",
+                             "MILRINONE LACTATE":  "C",
+                             "DEXAMETHASONE SODIUM PHOSPHATE":  "C",
+                             "NAFCILLIN SODIUM":  "Ø",
+                             "HYDRALAZINE HYDROCHLORIDE":  "Ø",
+                             "INAMRINONE LACTATE":  "C"
+                         }
+               }
+}
+;
+    const electrolytesData = [
+    {
+        "Row":  2,
+        "Name":  "Potassium chloride 15% 10 mL/amp \n(K=20 mEq/amp)",
+        "RateLimit":  "周邊: 10 mEq/hr\n中央: 40 mEq/hr",
+        "ConcLimit":  "周邊: 100 mEq/L\n中央: 400 mEq/L",
+        "Diluent":  "NS",
+        "Prep":  "周邊: 每支最少稀釋到 200 mL，最少滴注 2 hr \n中央: 每支最少稀釋到 50 mL，最少滴注 0.5 hr"
+    },
+    {
+        "Row":  3,
+        "Name":  "Magnesium sulfate 10% 20 mL/amp \n(Mg: 196 mg; 16.24 mEq; 8.12 mmol/amp)",
+        "RateLimit":  "150 mg/min (=9 g/hr)",
+        "ConcLimit":  "\u003c20%",
+        "Diluent":  "D5W, NS",
+        "Prep":  "可不稀釋\n\n血鎂 1.5~1.7 mg/dL\nIV 1~2 g (0.5~1 amp) over 1~2 hours\n\n血鎂 1~1.4 mg/dL\nIV 2~4 g (1~2 amp) over 2~12 hours\n\n血鎂 \u003c1 mg/dL\nIV 4~8 g (2~4 amp) over 4~24 hours"
+    },
+    {
+        "Row":  4,
+        "Name":  "Calcium gluconate 10% 10 mL/amp \n(Ca: 0.465 mEq/mL, 9.3 mg/mL)",
+        "RateLimit":  "\u003c200 mg/min (=12 g/hr)",
+        "ConcLimit":  "-",
+        "Diluent":  "D5W, NS",
+        "Prep":  "1~2 amp in 50 mL D5W or NS IV infusion 10~20 minutes"
+    },
+    {
+        "Row":  5,
+        "Name":  "Calcium chloride 400 mg/20 mL/amp 2%\n(Ca: 0.272 mEq/mL; 5.4 mEq/amp)",
+        "RateLimit":  "\u003c100 mg/min (=6 g/hr)",
+        "ConcLimit":  "-",
+        "Diluent":  "D5W, NS",
+        "Prep":  "由中央或深層靜脈給藥\n不須稀釋，1 amp 緩慢注射超過 2-5 分鐘"
+    },
+    {
+        "Row":  6,
+        "Name":  "Sodium glycerophosphate 20 mL/amp \n(P: 1 mmol/mL; Na 2 mmol/mL)",
+        "RateLimit":  "IV infusion 8~24 hours",
+        "ConcLimit":  "周邊: 0.1 mmol/mL",
+        "Diluent":  "IV nutrition solution",
+        "Prep":  "1 amp in 100 mL D5W IV insufion 8 hours via CVC"
+    },
+    {
+        "Row":  7,
+        "Name":  "Iron Sucrose 100 mg/5 mL/Vial\n(Fe: 20 mg/mL)",
+        "RateLimit":  "20 mg/mL/min",
+        "ConcLimit":  "-",
+        "Diluent":  "NS",
+        "Prep":  "不稀釋\n1 vial IV drip 5 minutes\n2 vials IV drip 10 mintues\n\n稀釋\n1 vial in 100 mL NS IV infusion 15 minutes \n2 vials in 250 mL NS IV infusion 30 minutes"
+    },
+    {
+        "Row":  8,
+        "Name":  "Zinc Sulfate 5.94 mg/mL/amp\n(Zinc 1.35 mg/mL)",
+        "RateLimit":  "",
+        "ConcLimit":  "1 mL in 100 mL solution",
+        "Diluent":  "D5W, NS\nIV nutrition solution",
+        "Prep":  "1 vial in 100 mL D5W or NS IV infusion 30~60 minutes"
+    },
+    {
+        "Row":  9,
+        "Name":  "Selenite 100 mcg/2 mL/amp",
+        "RateLimit":  "",
+        "ConcLimit":  "-",
+        "Diluent":  "D5W, NS\nIV nutrition solution",
+        "Prep":  "1~2 vials in 100 mL D5W or NS IV infusion 30 minutes"
+    }
+]
+;
+
+    // =========================================================================
+    // JS CONFIG & APP STATE
+    // =========================================================================
+    let medications = [];
+    let selectedDrugName = null;
+    let selectedConfigIndex = 0;
+
+    // Helper to parse unit from dosage or method text
+    function parseUnitFromDoseOrMethod(dosage, method) {
+        let str = ((dosage || "") + " " + (method || "")).trim();
+        if (!str) return null;
+        
+        let units = ["mcg/kg/min", "mcg/kg/hr", "mg/kg/hr", "mg/kg/min", "mg/hr", "mg/min", "mcg/hr", "mcg/min", "mmol/hr", "mmol/h", "u/kg/hr", "u/hr", "ml/hr", "u/kg/min"];
+        let normalized = str.toLowerCase().replace('μ', 'mc').replace('µ', 'mc').replace(' / ', '/').replace(' /', '/').replace('/ ', '/');
+        
+        for (let u of units) {
+            if (normalized.includes(u)) {
+                if (u === "mmol/h") return "mmol/hr";
+                if (u === "u/kg/hr") return "U/kg/hr";
+                if (u === "u/hr") return "U/hr";
+                if (u === "u/kg/min") return "U/kg/min";
+                return u;
+            }
+        }
+        
+        // Regex matches for standard slash units
+        let match = normalized.match(/([a-z]+)\/([a-z]+)\/([a-z]+)/);
+        if (match) return match[0];
+        match = normalized.match(/([a-z]+)\/([a-z]+)/);
+        if (match) return match[0];
+        
+        return null;
+    }
+
+    // Helper to parse concentration value and unit
+    function parseConcentration(concStr) {
+        if (!concStr) return null;
+        let match = concStr.match(/^([0-9.]+)\s*([a-zA-Zμµ/]+)/);
+        if (!match) return null;
+        let value = parseFloat(match[1]);
+        let unit = match[2].toLowerCase().replace('μ', 'mc').replace('µ', 'mc');
+        return { value, unit };
+    }
+
+    // Helper to get scale factor between mass units
+    function getMassScaleFactor(fromUnit, toUnit) {
+        let f = fromUnit.toLowerCase().replace(/^g$/, 'gm');
+        let t = toUnit.toLowerCase().replace(/^g$/, 'gm');
+        if (f === t) return 1;
+        
+        if (f === 'gm') {
+            if (t === 'mg') return 1000;
+            if (t === 'mcg') return 1000000;
+        }
+        if (f === 'mg') {
+            if (t === 'gm') return 0.001;
+            if (t === 'mcg') return 1000;
+        }
+        if (f === 'mcg') {
+            if (t === 'gm') return 0.000001;
+            if (t === 'mg') return 0.001;
+        }
+        return 1;
+    }
+
+    // Helper to generate dynamic user-friendly label for drug configuration tab buttons
+    function getConfigTabLabel(drug, cfg, idx) {
+        if (drug.name.includes("Amiodarone")) {
+            if (idx === 0) return "方法一 (前6小時)";
+            if (idx === 1) return "方法一 (後18小時)";
+            if (idx === 2) return "方法二 (高濃度250ml)";
+            if (idx === 3) return "方法三 (低濃度500ml)";
+        }
+        
+        let label = "";
+        
+        // Find if there are multiple preparations or concentrations
+        let prepsCount = new Set(drug.configs.map(c => c.prep)).size;
+        let concsCount = new Set(drug.configs.map(c => c.conc)).size;
+        
+        if (prepsCount > 1 || concsCount > 1) {
+            let isUndiluted = cfg.prep.includes("不稀釋") || cfg.diluent.includes("不稀釋") || cfg.diluent === "無" || cfg.prep === "-";
+            if (isUndiluted) {
+                label += "不稀釋: ";
+            } else {
+                let volMatch = cfg.prep.match(/([0-9.]+)\s*(ml|mL)/);
+                if (volMatch) {
+                    label += volMatch[1] + "ml: ";
+                } else if (cfg.conc) {
+                    label += cfg.conc + ": ";
+                } else {
+                    label += "稀釋版: ";
+                }
+            }
+        }
+        
+        if (cfg.dosage) {
+            label += cfg.dosage;
+        } else if (cfg.method) {
+            label += cfg.method;
+        } else {
+            label += `配製 ${idx + 1}`;
+        }
+        
+        return label;
+    }
+
+    // Helper to detect counterpart unit (weight-adjusted vs absolute)
+    function getDoseUnitCounterparts(unit) {
+        if (!unit) return { isWeightAdjusted: false, primary: "", secondary: "" };
+        let isWeightAdjusted = unit.includes('/kg');
+        let otherUnit = "";
+        if (isWeightAdjusted) {
+            otherUnit = unit.replace('/kg', '');
+        } else {
+            if (unit.includes('/min')) {
+                otherUnit = unit.replace('/min', '/kg/min');
+            } else if (unit.includes('/hr')) {
+                otherUnit = unit.replace('/hr', '/kg/hr');
+            } else {
+                otherUnit = unit + '/kg';
+            }
+        }
+        return {
+            isWeightAdjusted: isWeightAdjusted,
+            primary: unit,
+            secondary: otherUnit
+        };
+    }
+
+    // Initialize Database: grouping items with same name together
+    function initDatabase() {
+        let lastSeenName = "";
+        rawMedications.forEach(item => {
+            let name = item.Name ? item.Name.trim() : "";
+            
+            // Special merge rules for Excel formatting artifacts
+            if (name.includes("6% x 50 ml/bot") || name.includes("6% x 50 mL/bot")) {
+                name = "Immunoglobulin (IVIG) (6% 50 ml/bot) [NEW]";
+            }
+            
+            if (!name) {
+                name = lastSeenName;
+            } else {
+                lastSeenName = name;
+            }
+
+            // Skip comment/note rows (they don't contain dosage, method, or preparation)
+            if (!item.Dosage && !item.Method && !item.Prep) {
+                return;
+            }
+
+            let drug = medications.find(d => d.name === name);
+            if (!drug) {
+                drug = {
+                    name: name,
+                    category: item.Category || "其他",
+                    configs: []
+                };
+                medications.push(drug);
+            }
+
+            // Inherit empty fields from the previous configuration of the same drug
+            let prep = item.Prep ? item.Prep.trim() : "";
+            let diluent = item.Diluent ? item.Diluent.trim() : "";
+            let conc = item.Conc ? item.Conc.trim() : "";
+            let dosage = item.Dosage ? item.Dosage.trim() : "";
+            
+            if (drug.configs.length > 0) {
+                let prevConfig = drug.configs[drug.configs.length - 1];
+                if (!prep) prep = prevConfig.prep;
+                if (!diluent) diluent = prevConfig.diluent;
+                if (!conc) conc = prevConfig.conc;
+                if (!dosage) {
+                    dosage = prevConfig.dosage;
+                }
+            }
+
+            // If the prep text is a remark (starts with '('), it actually represents
+            // a detail for the main preparation method defined in the row above.
+            if (prep.startsWith("(") && prep.endsWith(")") && drug.configs.length > 0) {
+                let prevConfig = drug.configs[drug.configs.length - 1];
+                prep = prevConfig.prep.split('\n')[0] + "\n" + prep;
+            }
+
+            // Extract numeric limits for dosage calculations if possible
+            // Dosage e.g. "0.1~0.8 mg/kg/hr" or "2~20 mcg/kg/min"
+            let doseMin = 0;
+            let doseMax = 0;
+            let rangeMatch = dosage.match(/^([0-9.]+)\s*~\s*([0-9.]+)/);
+            if (rangeMatch) {
+                doseMin = parseFloat(rangeMatch[1]);
+                doseMax = parseFloat(rangeMatch[2]);
+            } else {
+                // Single value matching like "10 mL/hr"
+                let singleMatch = dosage.match(/^([0-9.]+)/);
+                if (singleMatch) {
+                    doseMin = parseFloat(singleMatch[1]);
+                    doseMax = doseMin;
+                }
+            }
+
+            let cfg = {
+                row: item.Row,
+                dosage: dosage,
+                doseMin: doseMin,
+                doseMax: doseMax,
+                method: item.Method,
+                prep: prep,
+                diluent: diluent,
+                conc: conc,
+                minRate: item.MinRate,
+                minRateFormula: item.MinRateFormula,
+                maxRate: item.MaxRate,
+                maxRateFormula: item.MaxRateFormula,
+                rateUnit: item.RateUnit,
+                inputRate: item.InputRate,
+                convDose: item.ConvDose,
+                convDoseFormula: item.ConvDoseFormula,
+                convDoseUnit: item.ConvDoseUnit
+            };
+
+            // Generate fallback dose info if missing
+            if (!cfg.convDoseUnit || !cfg.convDoseFormula) {
+                let targetUnit = parseUnitFromDoseOrMethod(cfg.dosage, cfg.method);
+                if (!targetUnit) {
+                    targetUnit = cfg.rateUnit || "ml/hr";
+                }
+                
+                cfg.convDoseUnit = targetUnit;
+                
+                let isVolumeUnit = targetUnit.toLowerCase().startsWith("ml");
+                if (isVolumeUnit) {
+                    if (targetUnit.toLowerCase().includes("/kg")) {
+                        cfg.convDoseFormula = "=R/C2";
+                    } else {
+                        cfg.convDoseFormula = "=R";
+                    }
+                } else {
+                    let concInfo = parseConcentration(cfg.conc);
+                    if (!concInfo) {
+                        concInfo = { value: 1.0, unit: "mg/ml" };
+                    }
+                    
+                    let parts = targetUnit.split('/');
+                    let targetMass = parts[0].trim();
+                    let isWeightAdjusted = targetUnit.toLowerCase().includes("/kg");
+                    let isPerMin = targetUnit.toLowerCase().includes("/min") || targetUnit.toLowerCase().includes("/m");
+                    
+                    let concMass = concInfo.unit.split('/')[0].trim();
+                    let massScale = getMassScaleFactor(concMass, targetMass);
+                    
+                    let formula = "=R*" + concInfo.value;
+                    if (massScale !== 1.0) {
+                        formula += "*" + massScale;
+                    }
+                    if (isPerMin) {
+                        formula += "/60";
+                    }
+                    if (isWeightAdjusted) {
+                        formula += "/C2";
+                    }
+                    cfg.convDoseFormula = formula;
+                }
+            }
+
+            drug.configs.push(cfg);
+        });
+    }
+
+    // =========================================================================
+    // EXCEL MATH EVALUATOR ENGINE
+    // =========================================================================
+    function evalExcelFormula(formula, weight, flowRate = 0, minRate = 0) {
+        if (!formula) return 0;
+        let str = formula.toString().trim();
+        if (!str.startsWith('=')) {
+            let val = parseFloat(str);
+            return isNaN(val) ? 0 : val;
+        }
+
+        // Clean formula string and normalize references
+        let expr = str.substring(1).toLowerCase().replace(/\s+/g, '');
+
+        // Replace C2 references with weight value
+        expr = expr.replace(/\$c\$2/g, weight).replace(/c2/g, weight);
+
+        // Replace M references with minRate
+        expr = expr.replace(/m\d+/g, minRate);
+
+        // Replace other cell references (like R8, O141, etc.) with flowRate
+        expr = expr.replace(/[a-z]+\d+/g, flowRate);
+
+        // Replace isolated R placeholder with flowRate
+        expr = expr.replace(/\br\b/g, flowRate);
+
+        // Remove any unauthorized characters to prevent security issues
+        expr = expr.replace(/[^0-9+\-*/().\s]/g, '');
+
+        try {
+            if (expr.trim() === '') return 0;
+            // Safe evaluation using Function
+            let result = Function('"use strict"; return (' + expr + ')')();
+            return isNaN(result) || result === Infinity || result === -Infinity ? 0 : result;
+        } catch(e) {
+            console.error("Formula eval failed:", formula, expr, e);
+            return 0;
+        }
+    }
+
+    // =========================================================================
+    // DOM CACHING & EVENT BINDINGS
+    // =========================================================================
+    document.addEventListener("DOMContentLoaded", () => {
+        initDatabase();
+
+        const themeToggleBtn = document.getElementById("themeToggleBtn");
+        const weightInput = document.getElementById("weightInput");
+        const weightSlider = document.getElementById("weightSlider");
+        const drugSearch = document.getElementById("drugSearch");
+        const categoryFilterContainer = document.getElementById("categoryFilterContainer");
+        const drugListContainer = document.getElementById("drugListContainer");
+        const drugDetailPanel = document.getElementById("drugDetailPanel");
+        const tabButtons = document.querySelectorAll(".tab-btn");
+        const tabContents = document.querySelectorAll(".tab-content");
+
+        // Theme switch
+        themeToggleBtn.onclick = () => {
+            document.body.classList.toggle("dark-theme");
+            if (document.body.classList.contains("dark-theme")) {
+                themeToggleBtn.textContent = "🌙";
+            } else {
+                themeToggleBtn.textContent = "☀️";
+            }
+        };
+
+        // Weight sync
+        weightInput.oninput = (e) => {
+            let val = parseFloat(e.target.value);
+            if (val && val >= 10 && val <= 250) {
+                weightSlider.value = val;
+                onWeightChanged();
+            }
+        };
+
+        weightSlider.oninput = (e) => {
+            weightInput.value = e.target.value;
+            onWeightChanged();
+        };
+
+        function getWeight() {
+            return parseFloat(weightInput.value) || 75.5;
+        }
+
+        function onWeightChanged() {
+            // Recalculate values on active drug detail panel
+            if (selectedDrugName) {
+                renderActiveDrug();
+            }
+            renderDatagrid();
+        }
+
+        // Search and Sidebar Categories
+        drugSearch.oninput = () => renderSidebar();
+
+        // Populate Category Tabs
+        const categories = new Set();
+        medications.forEach(m => {
+            if (m.category && m.category.trim() !== "") {
+                categories.add(m.category.trim());
+            }
+        });
+
+        // Sort categories
+        Array.from(categories).sort().forEach(cat => {
+            const span = document.createElement("span");
+            span.className = "category-tab";
+            span.textContent = cat;
+            span.dataset.cat = cat;
+            span.onclick = (e) => {
+                categoryFilterContainer.querySelectorAll(".category-tab").forEach(t => t.classList.remove("active"));
+                span.classList.add("active");
+                renderSidebar();
+            };
+            categoryFilterContainer.appendChild(span);
+        });
+
+        categoryFilterContainer.querySelector("[data-cat='all']").onclick = (e) => {
+            categoryFilterContainer.querySelectorAll(".category-tab").forEach(t => t.classList.remove("active"));
+            e.target.classList.add("active");
+            renderSidebar();
+        };
+
+        // Render sidebar items
+        function renderSidebar() {
+            const query = drugSearch.value.trim().toLowerCase();
+            const activeCatEl = categoryFilterContainer.querySelector(".category-tab.active");
+            const activeCat = activeCatEl ? activeCatEl.dataset.cat : "all";
+
+            drugListContainer.innerHTML = "";
+
+            const filtered = medications.filter(d => {
+                const matchQuery = d.name.toLowerCase().includes(query);
+                const matchCat = (activeCat === "all" || d.category === activeCat);
+                return matchQuery && matchCat;
+            });
+
+            filtered.forEach(drug => {
+                const btn = document.createElement("button");
+                btn.className = "drug-item-btn";
+                if (selectedDrugName === drug.name) {
+                    btn.classList.add("active");
+                }
+
+                // Make description subtext
+                let spec = drug.configs[0].prep || "點滴藥物";
+                if (spec.length > 28) spec = spec.substring(0, 26) + "...";
+
+                btn.innerHTML = `
+                    <span class="drug-item-name">${drug.name}</span>
+                    <div class="drug-item-meta">
+                        <span>分類: ${drug.category}</span>
+                        <span>${drug.configs.length} 種配製</span>
+                    </div>
+                `;
+
+                btn.onclick = () => {
+                    selectedDrugName = drug.name;
+                    selectedConfigIndex = 0;
+                    renderSidebar();
+                    renderActiveDrug();
+                };
+
+                drugListContainer.appendChild(btn);
+            });
+        }
+
+        // Render Active Drug Detail Panel
+        function renderActiveDrug() {
+            const drug = medications.find(d => d.name === selectedDrugName);
+            if (!drug) {
+                drugDetailPanel.innerHTML = `
+                    <div class="no-drug-selected">
+                        <span class="no-drug-icon">💊</span>
+                        <p style="font-weight: 600; font-size: 1.1rem;">請從左側選單選擇藥物，開始開方計算</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const currentConfig = drug.configs[selectedConfigIndex];
+            const weight = getWeight();
+
+            // Calculate min/max flow rate dynamically
+            const minRateVal = evalExcelFormula(currentConfig.minRateFormula, weight);
+            const maxRateVal = evalExcelFormula(currentConfig.maxRateFormula, weight, 0, minRateVal);
+
+            // Let's format rate display text
+            let minRateText = minRateVal.toFixed(2).replace(/\.?0+$/, "");
+            let maxRateText = maxRateVal.toFixed(2).replace(/\.?0+$/, "");
+            let flowRateRangeDisplay = minRateText;
+            if (maxRateVal && maxRateVal !== minRateVal) {
+                flowRateRangeDisplay += " ~ " + maxRateText;
+            }
+            if (currentConfig.rateUnit) {
+                flowRateRangeDisplay += " " + currentConfig.rateUnit;
+            }
+
+            // Generate method tabs html
+            let methodTabsHtml = "";
+            if (drug.configs.length > 1) {
+                methodTabsHtml = `<div class="method-tabs">`;
+                drug.configs.forEach((cfg, idx) => {
+                    let methodLabel = getConfigTabLabel(drug, cfg, idx);
+                    if (methodLabel.length > 25) methodLabel = methodLabel.substring(0, 23) + "..";
+                    methodTabsHtml += `
+                        <button class="method-tab-btn ${idx === selectedConfigIndex ? 'active' : ''}" data-idx="${idx}">
+                            ${methodLabel}
+                        </button>
+                    `;
+                });
+                methodTabsHtml += `</div>`;
+            }
+
+            // Initial Flow rate input default value
+            let initialFlowRateInput = parseFloat(currentConfig.inputRate) || minRateVal || 10;
+            initialFlowRateInput = parseFloat(initialFlowRateInput.toFixed(2));
+
+            // Generate card contents
+            drugDetailPanel.innerHTML = `
+                <div class="drug-detail-card">
+                    <div class="detail-header">
+                        <div class="detail-title">
+                            <h2>${drug.name}</h2>
+                            <span class="detail-category-badge">群組: ${drug.category}</span>
+                        </div>
+                        ${methodTabsHtml}
+                    </div>
+
+                    <!-- Drug Info grid -->
+                    <div class="info-grid">
+                        <div class="info-box">
+                            <span class="info-box-label">常用劑量</span>
+                            <span class="info-box-value">${currentConfig.dosage || '無標明'}</span>
+                        </div>
+                        <div class="info-box">
+                            <span class="info-box-label">常用配製方式</span>
+                            <span class="info-box-value" style="font-size: 0.85rem; white-space: pre-line;">${currentConfig.prep || '不須稀釋'}</span>
+                        </div>
+                        <div class="info-box">
+                            <span class="info-box-label">相容稀釋液</span>
+                            <span class="info-box-value">${currentConfig.diluent || '無限制'}</span>
+                        </div>
+                        <div class="info-box">
+                            <span class="info-box-label">稀釋後最終濃度</span>
+                            <span class="info-box-value highlight">${currentConfig.conc || '原始濃度'}</span>
+                        </div>
+                    </div>
+
+                    <!-- Calculated rate guides -->
+                    <div class="info-grid">
+                        <div class="info-box" style="background-color: var(--accent-light); border-color: var(--accent);">
+                            <span class="info-box-label" style="color: var(--accent); font-weight: 700;">建議開方流速 (對應體重: ${weight} kg)</span>
+                            <span class="info-box-value" style="font-size: 1.25rem; color: var(--accent);">${flowRateRangeDisplay}</span>
+                        </div>
+                        <div class="info-box">
+                            <span class="info-box-label">配製備註資訊</span>
+                            <span class="info-box-value" style="font-size: 0.8rem; font-weight: 400; color: var(--text-secondary);">
+                                ${currentConfig.method ? '開方方法：' + currentConfig.method : '依據病患體重即時計算點滴輸注流速。'}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- INTERACTIVE CALCULATOR SECTION -->
+                    <div class="calc-section">
+                        <div class="calc-header">
+                            <span>🧮 輸注劑量 ⇄ 點滴流速 雙向快速換算</span>
+                        </div>
+                        
+                        <div class="calc-grid">
+                            <!-- Left calculator: Flow Rate -> Dose -->
+                            <div class="calc-card">
+                                <div class="calc-title">
+                                    <span>輸入開方流速，換算臨床與體重劑量</span>
+                                </div>
+                                <div class="calc-input-row" style="margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.75rem; width: 100%;">
+                                    <input type="number" id="flowRateInput" class="calc-input" style="flex: 1; padding-right: 1rem;" min="0" max="500" step="0.1" value="${initialFlowRateInput}">
+                                    <span style="width: 7.5rem; font-size: 0.85rem; font-weight: 700; color: var(--text-secondary); text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="ml/hr">ml/hr</span>
+                                </div>
+                                <div class="calc-result-box" id="flowToDoseResultBox" style="display: flex; flex-direction: column; gap: 0.5rem; text-align: left; padding: 0.75rem 1.25rem;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <span class="calc-result-label" style="font-size: 0.75rem;">對應總劑量 (不計體重):</span>
+                                        <span class="calc-result-val" id="flowToDoseValAbsolute" style="font-size: 1.15rem; font-weight: 700;">-</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed rgba(2, 132, 199, 0.2); padding-top: 0.5rem;">
+                                        <span class="calc-result-label" style="font-size: 0.75rem; font-weight: 700; color: var(--accent);">用體重折算劑量:</span>
+                                        <span class="calc-result-val" id="flowToDoseValWeightAdjusted" style="font-size: 1.25rem; font-weight: 700; color: var(--accent);">-</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right calculator: Target Dose -> Flow Rate -->
+                            <div class="calc-card">
+                                <div class="calc-title">
+                                    <span>輸入目標劑量，反算流速 (可輸入任一欄，自動連動)</span>
+                                </div>
+                                <div class="calc-input-column" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                    <div class="calc-input-row" style="display: flex; align-items: center; gap: 0.75rem; width: 100%;">
+                                        <input type="number" id="targetDoseWeightInput" class="calc-input" style="flex: 1; padding-right: 1rem;" min="0" max="1000" step="0.01" placeholder="體重折算劑量">
+                                        <span id="doseWeightUnitLabel" style="width: 7.5rem; font-size: 0.85rem; font-weight: 700; color: var(--text-secondary); text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">-</span>
+                                    </div>
+                                    <div class="calc-input-row" style="display: flex; align-items: center; gap: 0.75rem; width: 100%;">
+                                        <input type="number" id="targetDoseAbsoluteInput" class="calc-input" style="flex: 1; padding-right: 1rem;" min="0" max="1000" step="0.01" placeholder="絕對總劑量">
+                                        <span id="doseAbsoluteUnitLabel" style="width: 7.5rem; font-size: 0.85rem; font-weight: 700; color: var(--text-secondary); text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">-</span>
+                                    </div>
+                                </div>
+                                <div class="calc-result-box" id="doseToFlowResultBox" style="background-color: var(--success-light); border-color: var(--success); text-align: center; margin-top: 0.5rem;">
+                                    <span class="calc-result-label" style="color: var(--success);">開方點滴流速</span>
+                                    <div class="calc-result-val" style="color: var(--success);" id="doseToFlowVal">-</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 24h quantity stats -->
+                        <div class="daily-usage-stats">
+                            <div class="daily-usage-item">
+                                <span class="daily-usage-lbl">每日總點滴量 (24小時)</span>
+                                <span class="daily-usage-val" id="dailyVolumeVal">- ml/day</span>
+                            </div>
+                            <div class="daily-usage-item">
+                                <span class="daily-usage-lbl">每日消耗藥量</span>
+                                <span class="daily-usage-val" id="dailyMedsVal">-</span>
+                            </div>
+                            <div class="daily-usage-item">
+                                <span class="daily-usage-lbl">臨床稀釋液消耗</span>
+                                <span class="daily-usage-val">${currentConfig.diluent || '無限制'}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Bind configuration method tabs click
+            const methodBtns = drugDetailPanel.querySelectorAll(".method-tab-btn");
+            methodBtns.forEach(btn => {
+                btn.onclick = () => {
+                    selectedConfigIndex = parseInt(btn.dataset.idx);
+                    renderActiveDrug();
+                };
+            });
+
+            // Bind input event listeners for dynamic recalculation
+            const flowRateInput = document.getElementById("flowRateInput");
+            const targetDoseWeightInput = document.getElementById("targetDoseWeightInput");
+            const targetDoseAbsoluteInput = document.getElementById("targetDoseAbsoluteInput");
+
+            // Detect unit counterparts
+            const unitInfo = getDoseUnitCounterparts(currentConfig.convDoseUnit);
+            
+            // Set input unit labels on the right
+            const doseWeightUnitLabel = document.getElementById("doseWeightUnitLabel");
+            const doseAbsoluteUnitLabel = document.getElementById("doseAbsoluteUnitLabel");
+            
+            let weightUnit = unitInfo.isWeightAdjusted ? unitInfo.primary : unitInfo.secondary;
+            let absoluteUnit = unitInfo.isWeightAdjusted ? unitInfo.secondary : unitInfo.primary;
+            
+            doseWeightUnitLabel.textContent = weightUnit;
+            doseAbsoluteUnitLabel.textContent = absoluteUnit;
+
+            // Recalculate Flow Rate -> Dose
+            function calcFlowToDose() {
+                const weight = getWeight();
+                const flowRate = parseFloat(flowRateInput.value) || 0;
+                
+                // Converted Dose in Primary Unit (defined in Excel)
+                const primaryDoseResult = evalExcelFormula(currentConfig.convDoseFormula, weight, flowRate, minRateVal);
+                
+                let absoluteDose = 0;
+                let weightAdjustedDose = 0;
+                
+                if (unitInfo.isWeightAdjusted) {
+                    weightAdjustedDose = primaryDoseResult;
+                    absoluteDose = primaryDoseResult * weight;
+                } else {
+                    absoluteDose = primaryDoseResult;
+                    weightAdjustedDose = weight > 0 ? (primaryDoseResult / weight) : 0;
+                }
+                
+                const doseBox = document.getElementById("flowToDoseResultBox");
+                const doseAbsoluteEl = document.getElementById("flowToDoseValAbsolute");
+                const doseWeightAdjustedEl = document.getElementById("flowToDoseValWeightAdjusted");
+                
+                // Format display text
+                let absText = `${absoluteDose.toFixed(3).replace(/\.?0+$/, "")} ${absoluteUnit}`;
+                let wtText = `${weightAdjustedDose.toFixed(4).replace(/\.?0+$/, "")} ${weightUnit}`;
+                
+                // Set warning color if flowRate is outside suggested limits
+                const bufferMin = minRateVal * 0.99;
+                const bufferMax = maxRateVal * 1.01;
+                
+                let isWarning = false;
+                if (maxRateVal && maxRateVal !== minRateVal) {
+                    if (flowRate < bufferMin || flowRate > bufferMax) {
+                        isWarning = true;
+                    }
+                } else if (minRateVal) {
+                    if (flowRate < bufferMin) {
+                        isWarning = true;
+                    }
+                }
+                
+                if (isWarning) {
+                    doseBox.classList.add("danger-warning");
+                    doseAbsoluteEl.textContent = `⚠️ ${absText}`;
+                    doseWeightAdjustedEl.innerHTML = `${wtText} <br><span style="font-size:0.7rem; font-weight:normal; color: var(--danger);">流速超出建議區間 (${flowRateRangeDisplay})!</span>`;
+                } else {
+                    doseBox.classList.remove("danger-warning");
+                    doseAbsoluteEl.textContent = absText;
+                    doseWeightAdjustedEl.textContent = wtText;
+                }
+
+                // Recalculate daily stats
+                const dailyVol = flowRate * 24;
+                document.getElementById("dailyVolumeVal").textContent = `${dailyVol.toFixed(1).replace(/\.?0+$/, "")} ml/day`;
+
+                // Calculate daily ampoules/vials consumption based on prep and daily volume
+                let dailyMedsText = "-";
+                let prepMatch = currentConfig.prep.match(/([0-9.]+)\s*(amps?|vials?|bot)\s*\/\s*([0-9.]+)\s*(ml)/i);
+                if (prepMatch) {
+                    let ampQty = parseFloat(prepMatch[1]);
+                    let bagVol = parseFloat(prepMatch[3]);
+                    let ampType = prepMatch[2];
+                    let dailyAmpConsumption = (dailyVol / bagVol) * ampQty;
+                    dailyMedsText = `${dailyAmpConsumption.toFixed(1).replace(/\.?0+$/, "")} ${ampType} / 24h`;
+                } else if (currentConfig.prep.includes("不稀釋")) {
+                    dailyMedsText = `${dailyVol.toFixed(1).replace(/\.?0+$/, "")} ml / 24h`;
+                }
+                document.getElementById("dailyMedsVal").textContent = dailyMedsText;
+            }
+
+            // Recalculate Flow Rate from Target Dose (primary unit)
+            function calcFlowFromPrimaryDose(primaryDoseVal) {
+                const weight = getWeight();
+                const flowEl = document.getElementById("doseToFlowVal");
+                
+                if (primaryDoseVal <= 0) {
+                    flowEl.textContent = "- ml/hr";
+                    return;
+                }
+                
+                // Anti-calculate Flow Rate based on formula structure
+                const testFlowRate = 10;
+                const calculatedDoseForTen = evalExcelFormula(currentConfig.convDoseFormula, weight, testFlowRate, minRateVal);
+                
+                let targetFlowRate = 0;
+                if (calculatedDoseForTen > 0) {
+                    targetFlowRate = (primaryDoseVal / calculatedDoseForTen) * testFlowRate;
+                }
+                
+                if (targetFlowRate > 0) {
+                    flowEl.textContent = `${targetFlowRate.toFixed(2).replace(/\.?0+$/, "")} ml/hr`;
+                } else {
+                    flowEl.textContent = "- ml/hr";
+                }
+            }
+
+            // Event bindings for inputs
+            flowRateInput.oninput = calcFlowToDose;
+
+            // Event bindings for linked inputs on the right
+            targetDoseWeightInput.oninput = () => {
+                const weight = getWeight();
+                const wtDose = parseFloat(targetDoseWeightInput.value) || 0;
+                
+                // Sync Absolute input field
+                const absDose = wtDose * weight;
+                targetDoseAbsoluteInput.value = absDose ? parseFloat(absDose.toFixed(4)) : "";
+                
+                // Compute flow rate based on which one is the primary unit
+                let primaryDoseVal = unitInfo.isWeightAdjusted ? wtDose : absDose;
+                calcFlowFromPrimaryDose(primaryDoseVal);
+            };
+
+            targetDoseAbsoluteInput.oninput = () => {
+                const weight = getWeight();
+                const absDose = parseFloat(targetDoseAbsoluteInput.value) || 0;
+                
+                // Sync Weight-adjusted input field
+                const wtDose = weight > 0 ? (absDose / weight) : 0;
+                targetDoseWeightInput.value = wtDose ? parseFloat(wtDose.toFixed(4)) : "";
+                
+                // Compute flow rate
+                let primaryDoseVal = unitInfo.isWeightAdjusted ? wtDose : absDose;
+                calcFlowFromPrimaryDose(primaryDoseVal);
+            };
+
+            // Initial calculation
+            calcFlowToDose();
+        }
+
+        // =========================================================================
+        // TAB 2: Y-SITE COMPATIBILITY LOGIC
+        // =========================================================================
+        const compatDrugA = document.getElementById("compatDrugA");
+        const compatDrugB = document.getElementById("compatDrugB");
+        const compatResultContainer = document.getElementById("compatResultContainer");
+
+        // Load compatibility selectors
+        function loadCompatibilityOptions() {
+            compatDrugA.innerHTML = '<option value="" disabled selected>-- 請選擇藥物 A --</option>';
+            compatDrugB.innerHTML = '<option value="" disabled selected>-- 請選擇藥物 B --</option>';
+            
+            // Get alphabetical sorted unique drugs list from compatibility database
+            const list = compatibilityDB.Drugs;
+            list.forEach(drug => {
+                const optA = document.createElement("option");
+                optA.value = drug;
+                optA.textContent = drug;
+                compatDrugA.appendChild(optA);
+
+                const optB = document.createElement("option");
+                optB.value = drug;
+                optB.textContent = drug;
+                compatDrugB.appendChild(optB);
+            });
+        }
+
+        loadCompatibilityOptions();
+
+        compatDrugA.onchange = checkCompatibility;
+        compatDrugB.onchange = checkCompatibility;
+
+        function checkCompatibility() {
+            const drugA = compatDrugA.value;
+            const drugB = compatDrugB.value;
+
+            if (!drugA || !drugB) return;
+
+            if (drugA === drugB) {
+                compatResultContainer.innerHTML = `
+                    <div class="compat-badge compatible">
+                        <span>C</span> 相容
+                    </div>
+                    <p class="compat-info-text">相同藥物在同路點滴中混合</p>
+                    <p class="compat-description">同種藥物接於同一個 Y-site 點滴管路，理所當然具有相容性。</p>
+                `;
+                return;
+            }
+
+            // Look up compatibility in matrix
+            let result = "Ø"; // default unknown
+            
+            // The matrix is stored as key-value lookup: Matrix[drugA][drugB]
+            if (compatibilityDB.Matrix[drugA] && compatibilityDB.Matrix[drugA][drugB]) {
+                result = compatibilityDB.Matrix[drugA][drugB];
+            } else if (compatibilityDB.Matrix[drugB] && compatibilityDB.Matrix[drugB][drugA]) {
+                // Compatibility is symmetrical
+                result = compatibilityDB.Matrix[drugB][drugA];
+            }
+
+            // Render result badge
+            if (result === "C") {
+                compatResultContainer.innerHTML = `
+                    <div class="compat-badge compatible">
+                        <span>✓</span> 相容 (Compatible)
+                    </div>
+                    <p class="compat-info-text">${drugA} 與 ${drugB}</p>
+                    <p class="compat-description">實驗證實此二種藥物在 Y-Site 管路混合時保持物理與化學穩定性，可以同時注射。</p>
+                `;
+            } else if (result === "X") {
+                compatResultContainer.innerHTML = `
+                    <div class="compat-badge incompatible">
+                        <span>✕</span> 不相容 (Incompatible)
+                    </div>
+                    <p class="compat-info-text" style="color: var(--danger);">${drugA} 與 ${drugB}</p>
+                    <p class="compat-description" style="border-color: var(--danger);">
+                        ⚠️ <b>警告：不相容！</b>混合後可能產生沉澱、氣泡或化學分解，<b>切勿</b>共用同一個 Y-site 管路同時給藥！
+                    </p>
+                `;
+            } else {
+                compatResultContainer.innerHTML = `
+                    <div class="compat-badge unknown">
+                        <span>Ø</span> 無資料 (No Data)
+                    </div>
+                    <p class="compat-info-text">${drugA} 與 ${drugB}</p>
+                    <p class="compat-description">文獻上無此二藥物 Y-Site 混合的相容性數據。臨床使用時建議分開不同靜脈路給藥以策安全。</p>
+                `;
+            }
+        }
+
+        // =========================================================================
+        // TAB 3: ELECTROLYTES LOGIC
+        // =========================================================================
+        const electroSearch = document.getElementById("electroSearch");
+        const electroTableBody = document.getElementById("electroTableBody");
+
+        electroSearch.oninput = () => renderElectrolytes();
+
+        function renderElectrolytes() {
+            const query = electroSearch.value.trim().toLowerCase();
+            electroTableBody.innerHTML = "";
+
+            const filtered = electrolytesData.filter(e => {
+                return e.Name.toLowerCase().includes(query) || 
+                       e.Prep.toLowerCase().includes(query) ||
+                       e.RateLimit.toLowerCase().includes(query);
+            });
+
+            filtered.forEach(e => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td class="electro-name">${e.Name}</td>
+                    <td class="electro-text" style="font-weight: 600; color: var(--danger);">${e.RateLimit || '-'}</td>
+                    <td class="electro-text" style="font-weight: 600; color: var(--warning);">${e.ConcLimit || '-'}</td>
+                    <td class="electro-text">${e.Diluent || '-'}</td>
+                    <td class="electro-prep">${e.Prep || '-'}</td>
+                `;
+                electroTableBody.appendChild(tr);
+            });
+        }
+
+        // =========================================================================
+        // TAB 4: QUICK REFERENCE DATAGRID
+        // =========================================================================
+        const datagridSearch = document.getElementById("datagridSearch");
+        const datagridTableBody = document.getElementById("datagridTableBody");
+
+        datagridSearch.oninput = () => renderDatagrid();
+
+        function renderDatagrid() {
+            const query = datagridSearch.value.trim().toLowerCase();
+            const weight = getWeight();
+            
+            datagridTableBody.innerHTML = "";
+
+            // Loop through all medications and their configs
+            medications.forEach(drug => {
+                drug.configs.forEach((cfg, idx) => {
+                    const matchName = drug.name.toLowerCase().includes(query);
+                    const matchPrep = cfg.prep.toLowerCase().includes(query);
+                    if (!matchName && !matchPrep) return;
+
+                    const tr = document.createElement("tr");
+                    
+                    // Show alphabetical icon or group letter only on the first method row
+                    let catHtml = "";
+                    if (idx === 0) {
+                        catHtml = `<td class="grid-cat-cell" rowspan="${drug.configs.length}">${drug.category}</td>`;
+                    }
+
+                    // Calculate Flow rate range dynamically
+                    const minRateVal = evalExcelFormula(cfg.minRateFormula, weight);
+                    const maxRateVal = evalExcelFormula(cfg.maxRateFormula, weight, 0, minRateVal);
+
+                    let minRateText = minRateVal.toFixed(2).replace(/\.?0+$/, "");
+                    let maxRateText = maxRateVal.toFixed(2).replace(/\.?0+$/, "");
+                    let rateTextDisplay = minRateText;
+                    if (maxRateVal && maxRateVal !== minRateVal) {
+                        rateTextDisplay += " ~ " + maxRateText;
+                    }
+                    if (cfg.rateUnit) {
+                        rateTextDisplay += " " + cfg.rateUnit;
+                    }
+
+                    // Display name: include configuration label if multiple configurations exist
+                    let displayName = drug.name;
+                    if (drug.configs.length > 1) {
+                        let configLabel = getConfigTabLabel(drug, cfg, idx);
+                        displayName += ` <span style="font-size:0.75rem; color:var(--text-secondary); font-weight:normal;">(${configLabel})</span>`;
+                    }
+
+                    tr.innerHTML = `
+                        ${catHtml}
+                        <td class="grid-name-cell">${displayName}</td>
+                        <td>${cfg.dosage || '-'}</td>
+                        <td style="font-size: 0.8rem; white-space: pre-line;">${cfg.prep || '-'}</td>
+                        <td>${cfg.diluent || '-'}</td>
+                        <td style="font-weight:700;">${cfg.conc || '-'}</td>
+                        <td>
+                            <button class="grid-action-btn" data-name="${drug.name}" data-idx="${idx}">
+                                開方計算
+                            </button>
+                        </td>
+                    `;
+
+                    // Bind action button click to load the drug in Tab 1
+                    tr.querySelector(".grid-action-btn").onclick = () => {
+                        selectedDrugName = drug.name;
+                        selectedConfigIndex = idx;
+                        
+                        // Switch active tab to Tab 1
+                        switchTab("tab-calculator");
+                        renderSidebar();
+                        renderActiveDrug();
+                    };
+
+                    datagridTableBody.appendChild(tr);
+                });
+            });
+        }
+
+        // =========================================================================
+        // TABS NAVIGATION CONTROLLER
+        // =========================================================================
+        function switchTab(tabId) {
+            tabButtons.forEach(btn => {
+                if (btn.dataset.tab === tabId) {
+                    btn.classList.add("active");
+                } else {
+                    btn.classList.remove("active");
+                }
+            });
+
+            tabContents.forEach(content => {
+                if (content.id === tabId) {
+                    content.classList.add("active");
+                } else {
+                    content.classList.remove("active");
+                }
+            });
+
+            // Trigger specific tab renders
+            if (tabId === "tab-electrolytes") {
+                renderElectrolytes();
+            } else if (tabId === "tab-datagrid") {
+                renderDatagrid();
+            }
+        }
+
+        tabButtons.forEach(btn => {
+            btn.onclick = () => {
+                switchTab(btn.dataset.tab);
+            };
+        });
+
+        // Initialize sidebar lists
+        renderSidebar();
+    });
+</script>
+</body>
+</html>
+
