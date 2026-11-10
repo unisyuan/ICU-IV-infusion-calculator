@@ -756,6 +756,18 @@
             border: 2px solid var(--warning);
         }
 
+        .compat-badge.conflict {
+            background-color: #fef3c7;
+            color: #b45309;
+            border: 2px solid #f59e0b;
+        }
+
+        [data-theme="dark"] .compat-badge.conflict {
+            background-color: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+            border-color: #f59e0b;
+        }
+
         .compat-info-text {
             font-size: 1.1rem;
             font-weight: 700;
@@ -934,6 +946,209 @@
         .grid-action-btn:hover {
             background-color: var(--accent);
             color: #ffffff;
+        }
+
+        /* =========================================================================
+           CUSTOM PREPARATION CARD STYLES
+           ========================================================================= */
+        .custom-prep-card {
+            background: #ffffff;
+            border: 1.5px dashed var(--accent);
+            border-radius: 0.75rem;
+            padding: 1rem 1.25rem;
+            margin-top: 1.25rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            transition: all 0.25s ease;
+        }
+
+        .custom-prep-card.active {
+            background: #f0fdf4;
+            border-color: var(--success);
+            border-style: solid;
+            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.08);
+        }
+
+        .custom-prep-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .custom-prep-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .custom-status-badge {
+            font-size: 0.75rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 9999px;
+            font-weight: 700;
+            background: #e2e8f0;
+            color: #475569;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .custom-status-badge.active {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .btn-toggle-custom {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            padding: 0.4rem 0.85rem;
+            border-radius: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-main);
+            transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-toggle-custom:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-light);
+        }
+
+        .btn-toggle-custom.btn-revert {
+            border-color: #fca5a5;
+            color: #dc2626;
+            background: #fef2f2;
+        }
+
+        .btn-toggle-custom.btn-revert:hover {
+            background: #fee2e2;
+        }
+
+        .custom-prep-body {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.07);
+        }
+
+        .custom-input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .custom-box {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 0.65rem;
+            padding: 0.85rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .custom-prep-card.active .custom-box {
+            border-color: rgba(22, 163, 74, 0.25);
+            background: #ffffff;
+        }
+
+        .custom-box-title {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .custom-form-row {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .custom-form-row label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .input-with-addon {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .calc-select {
+            padding: 0.5rem 0.65rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.4rem;
+            background: var(--input-bg);
+            color: var(--text-main);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .calc-select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .addon-text {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .custom-hint {
+            font-size: 0.75rem;
+            color: var(--accent);
+            font-weight: 600;
+            min-height: 1.1rem;
+            line-height: 1.3;
+        }
+
+        .custom-effective-box {
+            margin-top: auto;
+            background: var(--accent-light);
+            border-radius: 0.45rem;
+            padding: 0.6rem 0.85rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .custom-effective-lbl {
+            font-size: 0.78rem;
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .custom-effective-val {
+            font-size: 1.1rem;
+            color: var(--accent);
+            font-weight: 800;
+        }
+
+        .custom-tab-btn {
+            border: 1px dashed var(--accent) !important;
+            color: var(--accent) !important;
+        }
+
+        .custom-tab-btn.active {
+            background-color: var(--accent) !important;
+            color: #ffffff !important;
+            border-style: solid !important;
         }
     </style>
 </head>
@@ -1123,6 +1338,155 @@
     let medications = [];
     let selectedDrugName = null;
     let selectedConfigIndex = 0;
+    let customConfigs = {}; // key: drug.name -> custom configuration state
+
+    // Helper to normalize mass units for conversion
+    function normalizeMassUnit(u) {
+        if (!u) return "";
+        let s = u.toLowerCase().replace(/^g$/, 'gm').replace('μ', 'mc').replace('µ', 'mc').trim();
+        if (s === 'iu' || s === 'units' || s === 'unit') return 'u';
+        return s;
+    }
+
+    // Helper to parse drug package specification from its name
+    // e.g. "Norepinephrine (4 mg/4 ml/amp)" -> { amount: 4, amountUnit: 'mg', volume: 4, volumeUnit: 'ml', packageType: 'amp', packageLabel: '支' }
+    function parseDrugPackageSpec(drugName) {
+        if (!drugName) return null;
+        let match = drugName.match(/\(([0-9.]+)\s*([a-zA-Z]+)(?:\/([0-9.]+)\s*([a-zA-Z]+))?\/(amp|vial|bot|syringe)\)/i);
+        if (!match) return null;
+        let pkg = match[5].toLowerCase();
+        let pkgLabel = pkg === 'amp' ? '支 (Amp)' : pkg === 'vial' ? '瓶 (Vial)' : pkg === 'bot' ? '瓶 (Bot)' : '支';
+        return {
+            amount: parseFloat(match[1]),
+            amountUnit: match[2].toLowerCase().replace('μ', 'mc').replace('µ', 'mc'),
+            volume: match[3] ? parseFloat(match[3]) : null,
+            volumeUnit: match[4] ? match[4].toLowerCase() : 'ml',
+            packageType: pkg,
+            packageLabel: pkgLabel
+        };
+    }
+
+    // Helper to get or initialize custom configuration for a drug
+    function getCustomConfig(drug, baseConfig) {
+        if (!customConfigs[drug.name]) {
+            let spec = parseDrugPackageSpec(drug.name);
+            let defaultQty = 2;
+            let defaultVol = 250;
+            let defaultConcVal = 1;
+            let defaultConcUnit = "mg/ml";
+
+            // Try to parse volume and qty from baseConfig.prep (e.g. "4 amps/250 ml")
+            let prepStr = (baseConfig && baseConfig.prep) ? baseConfig.prep : "";
+            let prepMatch = prepStr.match(/([0-9.]+)\s*(amps?|vials?|bot)?\s*\/\s*([0-9.]+)\s*ml/i);
+            if (prepMatch) {
+                defaultQty = parseFloat(prepMatch[1]) || 2;
+                defaultVol = parseFloat(prepMatch[3]) || 250;
+            }
+
+            // Try to parse concentration from baseConfig.conc (e.g. "2 mg/ml")
+            let parsedConc = parseConcentration(baseConfig ? baseConfig.conc : "");
+            if (parsedConc) {
+                defaultConcVal = parsedConc.value;
+                defaultConcUnit = parsedConc.unit;
+            }
+
+            let initialUnit = "mg";
+            if (spec) {
+                initialUnit = "pkg";
+            } else if (parsedConc) {
+                initialUnit = parsedConc.unit.split('/')[0];
+            }
+
+            customConfigs[drug.name] = {
+                active: false,
+                qty: defaultQty,
+                unit: initialUnit,
+                totalVol: defaultVol,
+                concVal: defaultConcVal,
+                concUnit: defaultConcUnit,
+                prepNote: ""
+            };
+        }
+        return customConfigs[drug.name];
+    }
+
+    // Helper to calculate effective concentration from custom input
+    function calcEffectiveConcentration(customCfg, drugSpec) {
+        let concVal = parseFloat(customCfg.concVal) || 0;
+        let concUnit = customCfg.concUnit || "mg/ml";
+        let desc = "";
+
+        let qty = parseFloat(customCfg.qty) || 0;
+        let vol = parseFloat(customCfg.totalVol) || 0;
+
+        if (customCfg.unit === 'pkg' && drugSpec) {
+            let totalDose = (qty * drugSpec.amount).toFixed(2).replace(/\.?0+$/, "");
+            desc = `${qty} ${drugSpec.packageLabel} (${totalDose} ${drugSpec.amountUnit}) / ${vol} ml`;
+        } else {
+            desc = `${qty} ${customCfg.unit} / ${vol} ml`;
+        }
+
+        return {
+            value: concVal,
+            unit: concUnit,
+            description: desc
+        };
+    }
+
+    // Core pharmacology calculator for custom concentrations
+    function calcCustomPharmacology(baseConfig, weight, effectiveConc) {
+        let targetUnit = baseConfig.convDoseUnit || "ml/hr";
+        let parts = targetUnit.split('/');
+        let targetMass = parts[0].trim();
+        let isWeightAdjusted = targetUnit.toLowerCase().includes('/kg');
+        let isPerMin = targetUnit.toLowerCase().includes('/min') || targetUnit.toLowerCase().includes('/m');
+
+        let concMass = effectiveConc.unit.split('/')[0].trim();
+        let massScale = getMassScaleFactor(concMass, targetMass);
+        let mPerMl = (effectiveConc.value || 0) * massScale; // mass of drug per ml in targetMass unit
+
+        // From flow rate (ml/hr) -> doses
+        function calcDoseFromFlow(flowRate) {
+            let absDoseHr = flowRate * mPerMl; // targetMass per hour
+            let absDose = isPerMin ? (absDoseHr / 60) : absDoseHr;
+            let wtDose = (weight > 0) ? (absDose / weight) : 0;
+            let primary = isWeightAdjusted ? wtDose : absDose;
+            return {
+                primary,
+                absoluteDose: absDose,
+                weightAdjustedDose: wtDose
+            };
+        }
+
+        // From target dose -> flow rate (ml/hr)
+        function calcFlowFromDose(targetDoseVal, inputIsWeightAdjusted) {
+            if (targetDoseVal <= 0 || mPerMl <= 0) return 0;
+            let absDose = inputIsWeightAdjusted ? (targetDoseVal * weight) : targetDoseVal;
+            let reqPerHr = isPerMin ? (absDose * 60) : absDose;
+            return reqPerHr / mPerMl;
+        }
+
+        // Suggested flow rate range based on doseMin and doseMax
+        let minRate = 0;
+        let maxRate = 0;
+        if (baseConfig.doseMin > 0) {
+            minRate = calcFlowFromDose(baseConfig.doseMin, isWeightAdjusted);
+        }
+        if (baseConfig.doseMax > 0) {
+            maxRate = calcFlowFromDose(baseConfig.doseMax, isWeightAdjusted);
+        }
+
+        return {
+            mPerMl,
+            targetUnit,
+            isWeightAdjusted,
+            isPerMin,
+            minRate,
+            maxRate,
+            calcDoseFromFlow,
+            calcFlowFromDose
+        };
+    }
 
     // Helper to parse unit from dosage or method text
     function parseUnitFromDoseOrMethod(dosage, method) {
@@ -1163,8 +1527,8 @@
 
     // Helper to get scale factor between mass units
     function getMassScaleFactor(fromUnit, toUnit) {
-        let f = fromUnit.toLowerCase().replace(/^g$/, 'gm');
-        let t = toUnit.toLowerCase().replace(/^g$/, 'gm');
+        let f = normalizeMassUnit(fromUnit);
+        let t = normalizeMassUnit(toUnit);
         if (f === t) return 1;
         
         if (f === 'gm') {
@@ -1257,11 +1621,30 @@
             if (name.includes("6% x 50 ml/bot") || name.includes("6% x 50 mL/bot")) {
                 name = "Immunoglobulin (IVIG) (6% 50 ml/bot) [NEW]";
             }
-            
+
+            // Clean leading "或" prefixes and normalize Esomeprazole
+            if (name.startsWith("或")) {
+                name = name.substring(1).trim();
+            }
+            if (name.includes("Esomeprazole")) {
+                name = "Esomeprazole (40 mg/vial)";
+                item.Category = "E";
+            }
+            if (name.includes("Esmolol")) {
+                name = "Esmolol (100 mg/10 mL/vial)";
+                item.Category = "E";
+            }
+
             if (!name) {
                 name = lastSeenName;
             } else {
                 lastSeenName = name;
+            }
+
+            // Exclude withdrawn/removed drugs
+            let lowerName = name.toLowerCase();
+            if (lowerName.includes("drotrecogin") || lowerName.includes("thiopental")) {
+                return;
             }
 
             // Skip comment/note rows (they don't contain dosage, method, or preparation)
@@ -1567,43 +1950,90 @@
                 return;
             }
 
-            const currentConfig = drug.configs[selectedConfigIndex];
+            const currentConfig = drug.configs[selectedConfigIndex] || drug.configs[0];
             const weight = getWeight();
 
-            // Calculate min/max flow rate dynamically
-            const minRateVal = evalExcelFormula(currentConfig.minRateFormula, weight);
-            const maxRateVal = evalExcelFormula(currentConfig.maxRateFormula, weight, 0, minRateVal);
+            // Drug package specification
+            const drugSpec = parseDrugPackageSpec(drug.name);
+            const customCfg = getCustomConfig(drug, currentConfig);
+            const isCustomActive = !!customCfg.active;
 
-            // Let's format rate display text
+            // Calculate effective custom concentration & pharmacology
+            const effectiveConc = calcEffectiveConcentration(customCfg, drugSpec);
+            const customPharm = calcCustomPharmacology(currentConfig, weight, effectiveConc);
+
+            // Calculate min/max flow rate dynamically
+            let minRateVal = 0;
+            let maxRateVal = 0;
+            if (isCustomActive) {
+                minRateVal = customPharm.minRate;
+                maxRateVal = customPharm.maxRate;
+            } else {
+                minRateVal = evalExcelFormula(currentConfig.minRateFormula, weight);
+                maxRateVal = evalExcelFormula(currentConfig.maxRateFormula, weight, 0, minRateVal);
+            }
+
+            // Format rate display text
             let minRateText = minRateVal.toFixed(2).replace(/\.?0+$/, "");
             let maxRateText = maxRateVal.toFixed(2).replace(/\.?0+$/, "");
             let flowRateRangeDisplay = minRateText;
             if (maxRateVal && maxRateVal !== minRateVal) {
                 flowRateRangeDisplay += " ~ " + maxRateText;
             }
-            if (currentConfig.rateUnit) {
-                flowRateRangeDisplay += " " + currentConfig.rateUnit;
+            if (currentConfig.rateUnit || isCustomActive) {
+                flowRateRangeDisplay += " " + (currentConfig.rateUnit || "ml/hr");
+            }
+            if (isCustomActive) {
+                flowRateRangeDisplay += " (自訂)";
             }
 
-            // Generate method tabs html
-            let methodTabsHtml = "";
-            if (drug.configs.length > 1) {
-                methodTabsHtml = `<div class="method-tabs">`;
-                drug.configs.forEach((cfg, idx) => {
-                    let methodLabel = getConfigTabLabel(drug, cfg, idx);
-                    if (methodLabel.length > 25) methodLabel = methodLabel.substring(0, 23) + "..";
-                    methodTabsHtml += `
-                        <button class="method-tab-btn ${idx === selectedConfigIndex ? 'active' : ''}" data-idx="${idx}">
-                            ${methodLabel}
-                        </button>
-                    `;
-                });
-                methodTabsHtml += `</div>`;
-            }
+            // Generate method tabs html (including custom preparation tab)
+            let methodTabsHtml = `<div class="method-tabs">`;
+            drug.configs.forEach((cfg, idx) => {
+                let methodLabel = getConfigTabLabel(drug, cfg, idx);
+                if (methodLabel.length > 25) methodLabel = methodLabel.substring(0, 23) + "..";
+                let isTabActive = (idx === selectedConfigIndex && !isCustomActive);
+                methodTabsHtml += `
+                    <button class="method-tab-btn ${isTabActive ? 'active' : ''}" data-idx="${idx}">
+                        ${methodLabel}
+                    </button>
+                `;
+            });
+            methodTabsHtml += `
+                <button class="method-tab-btn custom-tab-btn ${isCustomActive ? 'active' : ''}" data-custom="true">
+                    🧪 自訂配製
+                </button>
+            </div>`;
 
             // Initial Flow rate input default value
             let initialFlowRateInput = parseFloat(currentConfig.inputRate) || minRateVal || 10;
             initialFlowRateInput = parseFloat(initialFlowRateInput.toFixed(2));
+
+            // Determine display values for info boxes
+            let displayPrepText = currentConfig.prep || '不須稀釋';
+            let displayConcText = currentConfig.conc || '原始濃度';
+            if (isCustomActive) {
+                displayPrepText = `<span style="color:var(--success); font-weight:700;">自訂配製：</span><br>${effectiveConc.description}`;
+                displayConcText = `<span class="highlight" style="color:var(--success);">${effectiveConc.value} ${effectiveConc.unit}</span> <span style="font-size:0.75rem; background:var(--success); color:#fff; padding:2px 6px; border-radius:4px; margin-left:4px;">自訂</span>`;
+            }
+
+            // Build drug unit options for custom preparation
+            let drugUnitOptions = '';
+            if (drugSpec) {
+                drugUnitOptions += `<option value="pkg" ${customCfg.unit === 'pkg' ? 'selected' : ''}>${drugSpec.packageLabel} (${drugSpec.amount} ${drugSpec.amountUnit})</option>`;
+                drugUnitOptions += `<option value="${drugSpec.amountUnit}" ${customCfg.unit === drugSpec.amountUnit ? 'selected' : ''}>${drugSpec.amountUnit}</option>`;
+            }
+            ['mg', 'mcg', 'gm', 'u', 'mmol'].forEach(u => {
+                if (!drugSpec || (u !== drugSpec.amountUnit)) {
+                    drugUnitOptions += `<option value="${u}" ${customCfg.unit === u ? 'selected' : ''}>${u}</option>`;
+                }
+            });
+
+            // Build concentration unit options
+            let concUnitOptions = '';
+            ['mg/ml', 'mcg/ml', 'u/ml', 'mmol/ml', 'gm/ml'].forEach(cu => {
+                concUnitOptions += `<option value="${cu}" ${customCfg.concUnit === cu ? 'selected' : ''}>${cu}</option>`;
+            });
 
             // Generate card contents
             drugDetailPanel.innerHTML = `
@@ -1624,7 +2054,7 @@
                         </div>
                         <div class="info-box">
                             <span class="info-box-label">常用配製方式</span>
-                            <span class="info-box-value" style="font-size: 0.85rem; white-space: pre-line;">${currentConfig.prep || '不須稀釋'}</span>
+                            <span class="info-box-value" style="font-size: 0.85rem; white-space: pre-line;">${displayPrepText}</span>
                         </div>
                         <div class="info-box">
                             <span class="info-box-label">相容稀釋液</span>
@@ -1632,12 +2062,12 @@
                         </div>
                         <div class="info-box">
                             <span class="info-box-label">稀釋後最終濃度</span>
-                            <span class="info-box-value highlight">${currentConfig.conc || '原始濃度'}</span>
+                            <span class="info-box-value highlight">${displayConcText}</span>
                         </div>
                     </div>
 
                     <!-- Calculated rate guides -->
-                    <div class="info-grid">
+                    <div class="info-grid" style="margin-top: 1rem;">
                         <div class="info-box" style="background-color: var(--accent-light); border-color: var(--accent);">
                             <span class="info-box-label" style="color: var(--accent); font-weight: 700;">建議開方流速 (對應體重: ${weight} kg)</span>
                             <span class="info-box-value" style="font-size: 1.25rem; color: var(--accent);">${flowRateRangeDisplay}</span>
@@ -1645,8 +2075,74 @@
                         <div class="info-box">
                             <span class="info-box-label">配製備註資訊</span>
                             <span class="info-box-value" style="font-size: 0.8rem; font-weight: 400; color: var(--text-secondary);">
-                                ${currentConfig.method ? '開方方法：' + currentConfig.method : '依據病患體重即時計算點滴輸注流速。'}
+                                ${isCustomActive ? '已啟用自訂配製方式，即時依自訂濃度重新換算流速與劑量。' : (currentConfig.method ? '開方方法：' + currentConfig.method : '依據病患體重即時計算點滴輸注流速。')}
                             </span>
+                        </div>
+                    </div>
+
+                    <!-- CUSTOM PREPARATION SECTION -->
+                    <div class="custom-prep-card ${isCustomActive ? 'active' : ''}" id="customPrepCard">
+                        <div class="custom-prep-header">
+                            <div class="custom-prep-title">
+                                <span style="font-size: 1.15rem;">🧪</span>
+                                <span>自訂配製方式與濃度</span>
+                                <span class="custom-status-badge ${isCustomActive ? 'active' : ''}" id="customStatusBadge">
+                                    ${isCustomActive ? '● 使用自訂配製中' : '○ 預設官方配製中'}
+                                </span>
+                            </div>
+                            <div class="custom-actions">
+                                <button type="button" class="btn-toggle-custom ${isCustomActive ? 'btn-revert' : ''}" id="btnToggleCustom">
+                                    ${isCustomActive ? '↩️ 還原官方配製' : '✏️ 啟用自訂配製'}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="custom-prep-body" id="customPrepBody" style="${isCustomActive ? 'display: block;' : 'display: none;'}">
+                            <div class="custom-input-grid">
+                                <!-- Option 1: By Drug Quantity + Total Volume -->
+                                <div class="custom-box">
+                                    <div class="custom-box-title">
+                                        <span>💧 方式一：依加藥量與總體積換算</span>
+                                    </div>
+                                    <div class="custom-form-row">
+                                        <label>加入藥量：</label>
+                                        <div class="input-with-addon">
+                                            <input type="number" id="customDrugQty" class="calc-input" style="flex: 1;" placeholder="例如 2" step="0.1" min="0" value="${customCfg.qty}">
+                                            <select id="customDrugUnitSelect" class="calc-select" style="min-width: 140px;">
+                                                ${drugUnitOptions}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="custom-form-row">
+                                        <label>稀釋後總體積：</label>
+                                        <div class="input-with-addon">
+                                            <input type="number" id="customTotalVol" class="calc-input" style="flex: 1;" placeholder="例如 100" step="1" min="1" value="${customCfg.totalVol}">
+                                            <span class="addon-text">ml</span>
+                                        </div>
+                                    </div>
+                                    <div class="custom-hint" id="customAmpHint"></div>
+                                </div>
+
+                                <!-- Option 2: Direct Concentration -->
+                                <div class="custom-box">
+                                    <div class="custom-box-title">
+                                        <span>🎯 方式二：直接輸入最終稀釋濃度</span>
+                                    </div>
+                                    <div class="custom-form-row">
+                                        <label>最終濃度：</label>
+                                        <div class="input-with-addon">
+                                            <input type="number" id="customConcVal" class="calc-input" style="flex: 1;" placeholder="例如 0.08" step="0.0001" min="0" value="${customCfg.concVal}">
+                                            <select id="customConcUnitSelect" class="calc-select" style="min-width: 110px;">
+                                                ${concUnitOptions}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="custom-effective-box">
+                                        <span class="custom-effective-lbl">目前生效濃度：</span>
+                                        <span class="custom-effective-val" id="customEffectiveConcText">${effectiveConc.value} ${effectiveConc.unit}</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -1723,10 +2219,107 @@
             const methodBtns = drugDetailPanel.querySelectorAll(".method-tab-btn");
             methodBtns.forEach(btn => {
                 btn.onclick = () => {
-                    selectedConfigIndex = parseInt(btn.dataset.idx);
-                    renderActiveDrug();
+                    if (btn.dataset.custom === "true") {
+                        customCfg.active = true;
+                        renderActiveDrug();
+                    } else {
+                        selectedConfigIndex = parseInt(btn.dataset.idx);
+                        customCfg.active = false;
+                        renderActiveDrug();
+                    }
                 };
             });
+
+            // Toggle custom preparation button
+            const btnToggleCustom = document.getElementById("btnToggleCustom");
+            if (btnToggleCustom) {
+                btnToggleCustom.onclick = () => {
+                    customCfg.active = !customCfg.active;
+                    renderActiveDrug();
+                };
+            }
+
+            // Custom inputs elements
+            const customDrugQtyInput = document.getElementById("customDrugQty");
+            const customDrugUnitSelect = document.getElementById("customDrugUnitSelect");
+            const customTotalVolInput = document.getElementById("customTotalVol");
+            const customConcValInput = document.getElementById("customConcVal");
+            const customConcUnitSelect = document.getElementById("customConcUnitSelect");
+            const customAmpHint = document.getElementById("customAmpHint");
+            const customEffectiveConcText = document.getElementById("customEffectiveConcText");
+
+            function updateCustomHint() {
+                if (!customAmpHint) return;
+                let q = parseFloat(customDrugQtyInput.value) || 0;
+                let v = parseFloat(customTotalVolInput.value) || 0;
+                let u = customDrugUnitSelect.value;
+                if (u === 'pkg' && drugSpec) {
+                    let totalD = (q * drugSpec.amount).toFixed(2).replace(/\.?0+$/, "");
+                    customAmpHint.textContent = `💡 ${q} ${drugSpec.packageLabel} × ${drugSpec.amount} ${drugSpec.amountUnit} = ${totalD} ${drugSpec.amountUnit} 稀釋至 ${v} ml`;
+                } else {
+                    customAmpHint.textContent = `💡 ${q} ${u} 加入稀釋液至 ${v} ml`;
+                }
+            }
+
+            function syncCustomFromOption1() {
+                let q = parseFloat(customDrugQtyInput.value) || 0;
+                let v = parseFloat(customTotalVolInput.value) || 0;
+                let u = customDrugUnitSelect.value;
+                customCfg.qty = q;
+                customCfg.unit = u;
+                customCfg.totalVol = v;
+
+                if (v > 0) {
+                    let calculatedConc = 0;
+                    let targetConcUnit = "mg/ml";
+                    if (u === 'pkg' && drugSpec) {
+                        let totalDose = q * drugSpec.amount;
+                        targetConcUnit = `${drugSpec.amountUnit}/ml`;
+                        calculatedConc = totalDose / v;
+                    } else {
+                        targetConcUnit = `${u}/ml`;
+                        calculatedConc = q / v;
+                    }
+
+                    // Format to max 4 decimal places
+                    customCfg.concVal = parseFloat(calculatedConc.toFixed(4));
+                    customCfg.concUnit = targetConcUnit;
+
+                    customConcValInput.value = customCfg.concVal;
+                    // Try to select matching unit option
+                    for (let opt of customConcUnitSelect.options) {
+                        if (opt.value.toLowerCase() === targetConcUnit.toLowerCase()) {
+                            customConcUnitSelect.value = opt.value;
+                            break;
+                        }
+                    }
+                }
+                updateCustomHint();
+                if (customEffectiveConcText) {
+                    customEffectiveConcText.textContent = `${customCfg.concVal} ${customCfg.concUnit}`;
+                }
+                if (customCfg.active) {
+                    calcFlowToDose();
+                }
+            }
+
+            function syncCustomFromOption2() {
+                customCfg.concVal = parseFloat(customConcValInput.value) || 0;
+                customCfg.concUnit = customConcUnitSelect.value;
+                if (customEffectiveConcText) {
+                    customEffectiveConcText.textContent = `${customCfg.concVal} ${customCfg.concUnit}`;
+                }
+                if (customCfg.active) {
+                    calcFlowToDose();
+                }
+            }
+
+            if (customDrugQtyInput) customDrugQtyInput.oninput = syncCustomFromOption1;
+            if (customDrugUnitSelect) customDrugUnitSelect.onchange = syncCustomFromOption1;
+            if (customTotalVolInput) customTotalVolInput.oninput = syncCustomFromOption1;
+            if (customConcValInput) customConcValInput.oninput = syncCustomFromOption2;
+            if (customConcUnitSelect) customConcUnitSelect.onchange = syncCustomFromOption2;
+            updateCustomHint();
 
             // Bind input event listeners for dynamic recalculation
             const flowRateInput = document.getElementById("flowRateInput");
@@ -1751,18 +2344,26 @@
                 const weight = getWeight();
                 const flowRate = parseFloat(flowRateInput.value) || 0;
                 
-                // Converted Dose in Primary Unit (defined in Excel)
-                const primaryDoseResult = evalExcelFormula(currentConfig.convDoseFormula, weight, flowRate, minRateVal);
-                
                 let absoluteDose = 0;
                 let weightAdjustedDose = 0;
-                
-                if (unitInfo.isWeightAdjusted) {
-                    weightAdjustedDose = primaryDoseResult;
-                    absoluteDose = primaryDoseResult * weight;
+
+                if (isCustomActive) {
+                    // Recompute custom pharmacology with current values
+                    const curEffConc = calcEffectiveConcentration(customCfg, drugSpec);
+                    const curPharm = calcCustomPharmacology(currentConfig, weight, curEffConc);
+                    let res = curPharm.calcDoseFromFlow(flowRate);
+                    absoluteDose = res.absoluteDose;
+                    weightAdjustedDose = res.weightAdjustedDose;
                 } else {
-                    absoluteDose = primaryDoseResult;
-                    weightAdjustedDose = weight > 0 ? (primaryDoseResult / weight) : 0;
+                    // Converted Dose in Primary Unit (defined in Excel)
+                    const primaryDoseResult = evalExcelFormula(currentConfig.convDoseFormula, weight, flowRate, minRateVal);
+                    if (unitInfo.isWeightAdjusted) {
+                        weightAdjustedDose = primaryDoseResult;
+                        absoluteDose = primaryDoseResult * weight;
+                    } else {
+                        absoluteDose = primaryDoseResult;
+                        weightAdjustedDose = weight > 0 ? (primaryDoseResult / weight) : 0;
+                    }
                 }
                 
                 const doseBox = document.getElementById("flowToDoseResultBox");
@@ -1804,15 +2405,26 @@
 
                 // Calculate daily ampoules/vials consumption based on prep and daily volume
                 let dailyMedsText = "-";
-                let prepMatch = currentConfig.prep.match(/([0-9.]+)\s*(amps?|vials?|bot)\s*\/\s*([0-9.]+)\s*(ml)/i);
-                if (prepMatch) {
-                    let ampQty = parseFloat(prepMatch[1]);
-                    let bagVol = parseFloat(prepMatch[3]);
-                    let ampType = prepMatch[2];
-                    let dailyAmpConsumption = (dailyVol / bagVol) * ampQty;
-                    dailyMedsText = `${dailyAmpConsumption.toFixed(1).replace(/\.?0+$/, "")} ${ampType} / 24h`;
-                } else if (currentConfig.prep.includes("不稀釋")) {
-                    dailyMedsText = `${dailyVol.toFixed(1).replace(/\.?0+$/, "")} ml / 24h`;
+                if (isCustomActive) {
+                    if (customCfg.unit === 'pkg' && drugSpec && customCfg.totalVol > 0) {
+                        let dailyAmps = (dailyVol / customCfg.totalVol) * (customCfg.qty || 1);
+                        dailyMedsText = `${dailyAmps.toFixed(1).replace(/\.?0+$/, "")} ${drugSpec.packageLabel} / 24h`;
+                    } else {
+                        let totalDailyDose = dailyVol * (customCfg.concVal || 0);
+                        let concM = (customCfg.concUnit || "mg/ml").split('/')[0];
+                        dailyMedsText = `${totalDailyDose.toFixed(1).replace(/\.?0+$/, "")} ${concM} / 24h`;
+                    }
+                } else {
+                    let prepMatch = currentConfig.prep.match(/([0-9.]+)\s*(amps?|vials?|bot)\s*\/\s*([0-9.]+)\s*(ml)/i);
+                    if (prepMatch) {
+                        let ampQty = parseFloat(prepMatch[1]);
+                        let bagVol = parseFloat(prepMatch[3]);
+                        let ampType = prepMatch[2];
+                        let dailyAmpConsumption = (dailyVol / bagVol) * ampQty;
+                        dailyMedsText = `${dailyAmpConsumption.toFixed(1).replace(/\.?0+$/, "")} ${ampType} / 24h`;
+                    } else if (currentConfig.prep.includes("不稀釋")) {
+                        dailyMedsText = `${dailyVol.toFixed(1).replace(/\.?0+$/, "")} ml / 24h`;
+                    }
                 }
                 document.getElementById("dailyMedsVal").textContent = dailyMedsText;
             }
@@ -1826,14 +2438,19 @@
                     flowEl.textContent = "- ml/hr";
                     return;
                 }
-                
-                // Anti-calculate Flow Rate based on formula structure
-                const testFlowRate = 10;
-                const calculatedDoseForTen = evalExcelFormula(currentConfig.convDoseFormula, weight, testFlowRate, minRateVal);
-                
+
                 let targetFlowRate = 0;
-                if (calculatedDoseForTen > 0) {
-                    targetFlowRate = (primaryDoseVal / calculatedDoseForTen) * testFlowRate;
+                if (isCustomActive) {
+                    const curEffConc = calcEffectiveConcentration(customCfg, drugSpec);
+                    const curPharm = calcCustomPharmacology(currentConfig, weight, curEffConc);
+                    targetFlowRate = curPharm.calcFlowFromDose(primaryDoseVal, unitInfo.isWeightAdjusted);
+                } else {
+                    // Anti-calculate Flow Rate based on formula structure
+                    const testFlowRate = 10;
+                    const calculatedDoseForTen = evalExcelFormula(currentConfig.convDoseFormula, weight, testFlowRate, minRateVal);
+                    if (calculatedDoseForTen > 0) {
+                        targetFlowRate = (primaryDoseVal / calculatedDoseForTen) * testFlowRate;
+                    }
                 }
                 
                 if (targetFlowRate > 0) {
@@ -1884,23 +2501,73 @@
         const compatDrugB = document.getElementById("compatDrugB");
         const compatResultContainer = document.getElementById("compatResultContainer");
 
-        // Load compatibility selectors
+        // Helper to escape HTML characters
+        function escapeHtml(str) {
+            if (!str) return "";
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // Format string into Title Case while preserving medical acronyms and minor words
+        function formatTitleCase(str) {
+            if (!str) return "";
+            const acronyms = ["D5W", "NS", "MVI", "MVI-12", "IVIG", "AB", "PH", "PAOD"];
+            const minorWords = ["and", "or", "in", "for", "with", "of", "to", "at", "by"];
+            return str.split(/(\s+|[-/().,])/).map((part, index) => {
+                if (!part || /^\s+$/.test(part) || /^[-/().,]+$/.test(part)) return part;
+                let upperPart = part.toUpperCase();
+                if (acronyms.includes(upperPart)) return upperPart;
+                let lower = part.toLowerCase();
+                if (minorWords.includes(lower) && index > 0) return lower;
+                return lower.charAt(0).toUpperCase() + lower.slice(1);
+            }).join("");
+        }
+
+        // Load compatibility selectors with optgroups
         function loadCompatibilityOptions() {
             compatDrugA.innerHTML = '<option value="" disabled selected>-- 請選擇藥物 A --</option>';
             compatDrugB.innerHTML = '<option value="" disabled selected>-- 請選擇藥物 B --</option>';
-            
-            // Get alphabetical sorted unique drugs list from compatibility database
-            const list = compatibilityDB.Drugs;
-            list.forEach(drug => {
-                const optA = document.createElement("option");
-                optA.value = drug;
-                optA.textContent = drug;
-                compatDrugA.appendChild(optA);
 
-                const optB = document.createElement("option");
-                optB.value = drug;
-                optB.textContent = drug;
-                compatDrugB.appendChild(optB);
+            const categories = compatibilityDB.Categories || {
+                "ICU常用藥": [],
+                "抗感染藥": [],
+                "其他重症用藥": []
+            };
+
+            const groupConfig = [
+                { key: "ICU常用藥", label: "🏥 輔大 ICU 常用藥" },
+                { key: "抗感染藥", label: "💊 抗感染藥物 (抗生素 / 抗黴菌)" },
+                { key: "其他重症用藥", label: "📋 其他重症常用藥物" }
+            ];
+
+            groupConfig.forEach(grp => {
+                const drugs = categories[grp.key] || [];
+                if (drugs.length === 0) return;
+
+                const grpA = document.createElement("optgroup");
+                grpA.label = grp.label;
+                const grpB = document.createElement("optgroup");
+                grpB.label = grp.label;
+
+                drugs.forEach(drug => {
+                    const titleCased = formatTitleCase(drug);
+                    const optA = document.createElement("option");
+                    optA.value = drug;
+                    optA.textContent = titleCased;
+                    grpA.appendChild(optA);
+
+                    const optB = document.createElement("option");
+                    optB.value = drug;
+                    optB.textContent = titleCased;
+                    grpB.appendChild(optB);
+                });
+
+                compatDrugA.appendChild(grpA);
+                compatDrugB.appendChild(grpB);
             });
         }
 
@@ -1915,26 +2582,52 @@
 
             if (!drugA || !drugB) return;
 
+            const nameA = formatTitleCase(drugA);
+            const nameB = formatTitleCase(drugB);
+
             if (drugA === drugB) {
                 compatResultContainer.innerHTML = `
                     <div class="compat-badge compatible">
-                        <span>C</span> 相容
+                        <span>✓</span> 相容 (Compatible)
                     </div>
-                    <p class="compat-info-text">相同藥物在同路點滴中混合</p>
+                    <p class="compat-info-text">${nameA} 與 ${nameB}</p>
                     <p class="compat-description">同種藥物接於同一個 Y-site 點滴管路，理所當然具有相容性。</p>
                 `;
                 return;
             }
 
-            // Look up compatibility in matrix
-            let result = "Ø"; // default unknown
-            
-            // The matrix is stored as key-value lookup: Matrix[drugA][drugB]
+            // Look up compatibility entry in matrix
+            let entry = null;
             if (compatibilityDB.Matrix[drugA] && compatibilityDB.Matrix[drugA][drugB]) {
-                result = compatibilityDB.Matrix[drugA][drugB];
+                entry = compatibilityDB.Matrix[drugA][drugB];
             } else if (compatibilityDB.Matrix[drugB] && compatibilityDB.Matrix[drugB][drugA]) {
-                // Compatibility is symmetrical
-                result = compatibilityDB.Matrix[drugB][drugA];
+                entry = compatibilityDB.Matrix[drugB][drugA];
+            }
+
+            let result = "Ø";
+            let summary = "";
+            let notes = "";
+            let src = "";
+
+            if (typeof entry === "string") {
+                result = entry;
+            } else if (entry) {
+                result = entry.res || "Ø";
+                summary = entry.summary || "";
+                notes = entry.notes || "";
+                src = entry.src || "";
+            }
+
+            // Additional details block (study summary, notes, source)
+            let detailsHtml = "";
+            if (summary || notes || src) {
+                detailsHtml = `
+                    <div style="margin-top: 1rem; width: 100%; max-width: 600px; text-align: left; background: var(--hover-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.85rem 1.15rem; font-size: 0.88rem; line-height: 1.5;">
+                        ${summary ? `<div style="margin-bottom: 0.35rem;"><b>📚 文獻／Micromedex：</b> ${escapeHtml(summary)}</div>` : ''}
+                        ${notes ? `<div style="margin-bottom: 0.35rem; color: var(--text-secondary);"><b>ℹ️ 臨床備註：</b> ${escapeHtml(notes)}</div>` : ''}
+                        ${src ? `<div style="font-size: 0.78rem; color: var(--text-muted, #888); margin-top: 0.35rem;"><b>📌 資料來源：</b> ${escapeHtml(src)}</div>` : ''}
+                    </div>
+                `;
             }
 
             // Render result badge
@@ -1943,26 +2636,40 @@
                     <div class="compat-badge compatible">
                         <span>✓</span> 相容 (Compatible)
                     </div>
-                    <p class="compat-info-text">${drugA} 與 ${drugB}</p>
+                    <p class="compat-info-text">${nameA} 與 ${nameB}</p>
                     <p class="compat-description">實驗證實此二種藥物在 Y-Site 管路混合時保持物理與化學穩定性，可以同時注射。</p>
+                    ${detailsHtml}
                 `;
             } else if (result === "X") {
                 compatResultContainer.innerHTML = `
                     <div class="compat-badge incompatible">
                         <span>✕</span> 不相容 (Incompatible)
                     </div>
-                    <p class="compat-info-text" style="color: var(--danger);">${drugA} 與 ${drugB}</p>
+                    <p class="compat-info-text" style="color: var(--danger);">${nameA} 與 ${nameB}</p>
                     <p class="compat-description" style="border-color: var(--danger);">
                         ⚠️ <b>警告：不相容！</b>混合後可能產生沉澱、氣泡或化學分解，<b>切勿</b>共用同一個 Y-site 管路同時給藥！
                     </p>
+                    ${detailsHtml}
+                `;
+            } else if (result === "?") {
+                compatResultContainer.innerHTML = `
+                    <div class="compat-badge conflict">
+                        <span>⚠️</span> 衝突待確認／條件相容 (Mixed / Variable)
+                    </div>
+                    <p class="compat-info-text" style="color: #b45309;">${nameA} 與 ${nameB}</p>
+                    <p class="compat-description" style="border-color: #f59e0b;">
+                        ⚠️ <b>注意：不同文獻或濃度條件下結果衝突！</b>相容性高度受藥物濃度、稀釋液、接觸時間影響，非必要切勿共用同一管路；若需共用請詳加複核實際給藥條件或分路輸注。
+                    </p>
+                    ${detailsHtml}
                 `;
             } else {
                 compatResultContainer.innerHTML = `
                     <div class="compat-badge unknown">
                         <span>Ø</span> 無資料 (No Data)
                     </div>
-                    <p class="compat-info-text">${drugA} 與 ${drugB}</p>
+                    <p class="compat-info-text">${nameA} 與 ${nameB}</p>
                     <p class="compat-description">文獻上無此二藥物 Y-Site 混合的相容性數據。臨床使用時建議分開不同靜脈路給藥以策安全。</p>
+                    ${detailsHtml}
                 `;
             }
         }
